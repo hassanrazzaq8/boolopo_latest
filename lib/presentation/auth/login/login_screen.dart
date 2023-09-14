@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:watch_app/core/utils/app_string.dart';
 import 'package:watch_app/presentation/bottomBar/bottombar_screen.dart';
 import 'package:watch_app/presentation/commamn/app_button.dart';
-import 'package:watch_app/presentation/commamn/app_text_field.dart';
 import 'package:watch_app/utills/color.dart';
+import 'package:watch_app/utills/loader.dart';
 import 'package:watch_app/utills/snack_bar.dart';
 import 'package:watch_app/widgets/custom_textfield.dart';
 import '../../../core/app_export.dart';
@@ -22,16 +22,14 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   TextEditingController pass = TextEditingController();
   TextEditingController user = TextEditingController();
-  bool isLoading = false;
   final formkey = GlobalKey<FormState>();
   final formkey2 = GlobalKey<FormState>();
   String? username;
   int? userid;
   String? useremail;
+  GetStorage box = GetStorage();
   void login(context) async {
-    setState(() {
-      isLoading = true;
-    });
+    Loader.showLoader(context: context);
     try {
       http.Response response = await http.post(
         Uri.parse("https://boolopo.co/apies/login.php"),
@@ -45,34 +43,40 @@ class _LoginScreenState extends State<LoginScreen> {
           response.body.toString(),
         );
 
-        setState(() {
-          isLoading = false;
-        });
+
         username = data["user_name"];
         useremail = data["user_email"];
         userid = data["user_id"];
-        print(username);
-        print(useremail);
-        print(userid);
+        debugPrint(username);
+        debugPrint(useremail);
+        debugPrint(userid.toString());
 
         if (data["status"] == "success") {
-          Navigator.push(
+          box.write(AppString.userName, username);
+          box.write(AppString.userId, userid);
+          box.write(AppString.email, useremail);
+          Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(
               builder: (context) => BottomBarScreen(),
             ),
+            (route) => false,
           );
+          debugPrint("After login the userid : ${box.read(AppString.userId)}");
+        }else{
+          showSnackBar(data["status"], context);
         }
       } else {
-        print("failed");
+        showSnackBar(AppString.badHappenedError, context);
+
       }
+      Loader.hideLoader(context);
     } catch (e) {
       print(e);
+      Loader.hideLoader(context);
     }
-    GetStorage box = GetStorage();
-    box.write("username", username);
-    box.write("userId", userid);
-    box.write("userEmail", useremail);
+
+
   }
 
   @override
@@ -179,6 +183,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               },
                             ),
                           ),
+                          hSizedBox10,
                           Align(
                             alignment: Alignment.centerRight,
                             child: TextButton(
@@ -202,7 +207,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           SizedBox(height: Get.height * 0.07),
                           AppButton(
-                            text: isLoading ? "LOading.." : AppString.login,
+                            text:  AppString.login,
                             width: Get.width / 2,
                             onPressed: () {
                               // login(context);
@@ -210,7 +215,6 @@ class _LoginScreenState extends State<LoginScreen> {
                               final isvalid = formkey2.currentState!.validate();
                               if (isValid && isvalid) {
                                 login(context);
-                                GetStorage().write("isIt", true);
                               }
                             },
                           ),
@@ -224,9 +228,10 @@ class _LoginScreenState extends State<LoginScreen> {
                               width: Get.width / 2,
                               color: themeColor,
                               onPressed: () {
-                                Get.toNamed(
-                                  AppRoutes.bottomBarScreen,
-                                );
+                                // Get.offAllNamed(
+                                //   AppRoutes.bottomBarScreen,
+                                // );
+                                Loader.showLoader(context: context);
                               },
                             ),
                           ),
@@ -247,6 +252,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           GestureDetector(
                             onTap: () {
                               Get.offAllNamed(AppRoutes.signupScreen);
+
                             },
                             child: Text(
                               AppString.register,

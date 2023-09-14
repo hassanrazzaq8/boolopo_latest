@@ -145,7 +145,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  titleText(AppString.userid),
+                  titleText(AppString.userId),
                   hSizedBox6,
                   CustomTextfiled(
                     controller: userid,

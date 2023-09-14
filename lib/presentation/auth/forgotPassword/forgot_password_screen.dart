@@ -38,7 +38,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           isLoading = false;
         });
         if (data["status"] == "success") {
-          _con.onForgot();
+
         } else if (data["status"] == "invalid email") {
           showSnackBar("Invalid Email please check it", context);
         }

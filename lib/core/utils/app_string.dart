@@ -15,7 +15,7 @@ class AppString {
   static String signup = "Sign Up";
   static String loginDetails = "Please login to continue using our app";
   static String signupDetails = "Please fill the details and creant account";
-  static String email = "Email";
+  static String email = "email";
   static String password = "Password";
   static String newPassword = "New Password";
   static String conformPassword = "Conform Password";
@@ -24,10 +24,10 @@ class AppString {
   static String register = "Register";
   static String mes = "Message";
   static String dontHaveanAccount = "Don't Have an Account? ";
-  static String userid = "User Id";
-  static String firstName = "First Name";
-  static String lastName = "Last Name";
-  static String userName = "Username";
+  static String userId = "user_id";
+  static String firstName = "first_name";
+  static String lastName = "last_name";
+  static String userName = "username";
   static String phNo = "Phone No";
   static String alreadyHaveanAccount = "Already Have an Account? ";
   static String or = "Or";
@@ -182,4 +182,5 @@ class AppString {
   static String top = "Top";
   static String tags = "Tags";
   static String categories = "Categories";
+  static String badHappenedError = "Something bad happened Please try again";
 }
