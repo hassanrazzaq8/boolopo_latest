@@ -6,6 +6,7 @@ import 'package:watch_app/core/utils/app_string.dart';
 import 'package:watch_app/presentation/bottomBar/bottombar_screen.dart';
 import 'package:watch_app/presentation/commamn/app_button.dart';
 import 'package:watch_app/utills/color.dart';
+import 'package:watch_app/utills/custom_dialogue.dart';
 import 'package:watch_app/utills/loader.dart';
 import 'package:watch_app/utills/snack_bar.dart';
 import 'package:watch_app/widgets/custom_textfield.dart';
@@ -28,6 +29,7 @@ class _LoginScreenState extends State<LoginScreen> {
   int? userid;
   String? useremail;
   GetStorage box = GetStorage();
+
   void login(context) async {
     Loader.showLoader(context: context);
     try {
@@ -42,7 +44,6 @@ class _LoginScreenState extends State<LoginScreen> {
         var data = jsonDecode(
           response.body.toString(),
         );
-
 
         username = data["user_name"];
         useremail = data["user_email"];
@@ -63,20 +64,17 @@ class _LoginScreenState extends State<LoginScreen> {
             (route) => false,
           );
           debugPrint("After login the userid : ${box.read(AppString.userId)}");
-        }else{
+        } else {
           showSnackBar(data["status"], context);
         }
       } else {
         showSnackBar(AppString.badHappenedError, context);
-
       }
       Loader.hideLoader(context);
     } catch (e) {
       print(e);
       Loader.hideLoader(context);
     }
-
-
   }
 
   @override
@@ -207,7 +205,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           SizedBox(height: Get.height * 0.07),
                           AppButton(
-                            text:  AppString.login,
+                            text: AppString.login,
                             width: Get.width / 2,
                             onPressed: () {
                               // login(context);
@@ -228,10 +226,10 @@ class _LoginScreenState extends State<LoginScreen> {
                               width: Get.width / 2,
                               color: themeColor,
                               onPressed: () {
-                                // Get.offAllNamed(
-                                //   AppRoutes.bottomBarScreen,
-                                // );
-                                Loader.showLoader(context: context);
+                                Get.offAllNamed(
+                                  AppRoutes.bottomBarScreen,
+                                );
+
                               },
                             ),
                           ),
@@ -252,7 +250,6 @@ class _LoginScreenState extends State<LoginScreen> {
                           GestureDetector(
                             onTap: () {
                               Get.offAllNamed(AppRoutes.signupScreen);
-
                             },
                             child: Text(
                               AppString.register,

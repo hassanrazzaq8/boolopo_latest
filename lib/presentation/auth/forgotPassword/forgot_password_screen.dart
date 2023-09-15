@@ -6,8 +6,10 @@ import 'package:watch_app/presentation/commamn/app_bar.dart';
 import 'package:watch_app/presentation/commamn/app_button.dart';
 import 'package:watch_app/presentation/commamn/app_text_field.dart';
 import 'package:http/http.dart' as http;
+import 'package:watch_app/utills/loader.dart';
 import 'package:watch_app/utills/snack_bar.dart';
 import '../../../core/app_export.dart';
+import '../../../utills/custom_dialogue.dart';
 import 'forgot_password_controller.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
@@ -19,31 +21,38 @@ class ForgotPasswordScreen extends StatefulWidget {
 
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   final ForgotPasswordController _con = Get.put(ForgotPasswordController());
-  bool isLoading = false;
+
   forgotPassword() async {
     try {
+      Loader.showLoader(context: context);
       const url = "https://boolopo.co/apies/forgotpassword.php";
-      setState(() {
-        isLoading = true;
-      });
+
       final response = await http.post(
         Uri.parse(url),
         body: {
           "useremail": _con.email.value,
         },
       );
+      Loader.hideLoader(context);
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body.toString());
-        setState(() {
-          isLoading = false;
-        });
-        if (data["status"] == "success") {
 
+        if (data["status"] == "success") {
+          if (mounted) {
+            customDialogue(context,
+                message:
+                    "Email has been sent to your email account with password reset link",
+                onOkTap: () {
+              Get.offAllNamed(AppRoutes.loginScreen);
+            });
+          }
         } else if (data["status"] == "invalid email") {
           showSnackBar("Invalid Email please check it", context);
         }
       }
     } catch (e) {
+      Loader.hideLoader(context);
+
       showSnackBar(e.toString(), context);
     }
   }
@@ -113,7 +122,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                           ),
                           hSizedBox20,
                           AppButton(
-                            text: isLoading ? "Loading..." : AppString.send,
+                            text: AppString.send,
                             width: Get.width / 2,
                             onPressed: () {
                               forgotPassword();

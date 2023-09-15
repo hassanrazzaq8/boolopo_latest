@@ -1,12 +1,16 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:watch_app/core/utils/app_string.dart';
+import 'package:watch_app/presentation/auth/login/login_screen.dart';
 import 'package:watch_app/presentation/commamn/app_button.dart';
 import 'package:http/http.dart' as http;
+import 'package:watch_app/utills/loader.dart';
 import 'package:watch_app/widgets/custom_textfield.dart';
 import '../../../core/app_export.dart';
+import '../../../utills/snack_bar.dart';
 import '../../bottomBar/bottombar_screen.dart';
 import 'signup_controller.dart';
 
@@ -32,12 +36,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
   String? username;
   int? userid;
   String? useremail;
-  bool loading = false;
-  void register(context) async {
+
+  Future<void> register(context) async {
     try {
-      setState(() {
-        loading = true;
-      });
+      Loader.showLoader(context: context);
       http.Response response = await http.post(
         Uri.parse("https://boolopo.co/apies/user-accounts.php"),
         body: {
@@ -52,38 +54,39 @@ class _SignUpScreenState extends State<SignUpScreen> {
         var data = jsonDecode(
           response.body.toString(),
         );
-        setState(() {
-          loading = false;
-        });
+
         username = data["user_name"];
         useremail = data["user_email"];
         userid = data["user_id"];
+        Loader.hideLoader(context);
         if (data["status"] == "success") {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => BottomBarScreen(),
-            ),
-          );
+          log("account created successfully");
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (_) => const LoginScreen()),
+              (route) => false);
+          showSnackBar("account created successfully", context);
+        } else {
+          showSnackBar(data["status"], context);
         }
-        print("account created successfully");
       } else {
-        print("Failed");
+        showSnackBar(AppString.badHappenedError, context);
       }
     } catch (e) {
-      print(e);
+      Loader.hideLoader(context);
+      debugPrint("error is : $e");
     }
   }
 
-  GetStorage box = GetStorage();
-  save() {
-    GetStorage box = GetStorage();
-    box.write("username", username);
-    box.write("userId", userid);
-    box.write("userEmail", useremail);
-    box.write("firstName", fn.text);
-    box.write("lastName", ln.text);
-  }
+  // GetStorage box = GetStorage();
+  // save() {
+  //   GetStorage box = GetStorage();
+  //   box.write("username", username);
+  //   box.write("userId", userid);
+  //   box.write("userEmail", useremail);
+  //   box.write("firstName", fn.text);
+  //   box.write("lastName", ln.text);
+  // }
 
   @override
   void dispose() {
@@ -246,7 +249,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           ),
                           SizedBox(height: Get.height * 0.07),
                           AppButton(
-                            text: loading ? "Loading..." : AppString.signup,
+                            text: AppString.signup,
                             width: Get.width / 2,
                             onPressed: () {
                               final valid = form.currentState!.validate();
@@ -260,8 +263,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   valid4 &&
                                   valid5) {
                                 register(context);
-                                save();
-                                GetStorage().write("isIt", true);
                               }
                             },
                           ),
