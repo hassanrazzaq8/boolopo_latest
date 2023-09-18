@@ -39,7 +39,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
         if (data["status"] == "success") {
           if (mounted) {
-            customDialogue(context,
+            customDialogue(
                 message:
                     "Email has been sent to your email account with password reset link",
                 onOkTap: () {

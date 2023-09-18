@@ -1,13 +1,14 @@
 import 'package:get_storage/get_storage.dart';
+import 'package:watch_app/utills/storage.dart';
 
 import '/core/app_export.dart';
 
 class SplashController extends GetxController {
   @override
   void onInit() {
-    var x = GetStorage().read("isIt");
+
     Future.delayed(const Duration(seconds: 3), () {
-      x != null
+     Storage.isUserLogin
           ? Get.offNamed(AppRoutes.bottomBarScreen)
           : Get.offNamed(AppRoutes.loginScreen);
     });

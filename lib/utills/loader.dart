@@ -28,4 +28,12 @@ class Loader {
   static hideLoader(BuildContext context) {
     Navigator.of(context).pop();
   }
+
+  static apiLoading({Color?color}){
+    return  Center(
+      child: CircularProgressIndicator(
+        color:color?? themeColor,
+      ),
+    );
+  }
 }

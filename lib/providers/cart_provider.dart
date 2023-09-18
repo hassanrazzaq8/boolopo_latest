@@ -6,7 +6,7 @@ class ProviderCart extends ChangeNotifier {
   List get cart => _cart;
 
   void addToCart(
-      int id, String title, String price, double quantity, String image) {
+      String id, String title, String price, double quantity, String image) {
     if (GetStorage().read("mycart") != null) {
       _cart = GetStorage().read("mycart");
     }
@@ -28,7 +28,7 @@ class ProviderCart extends ChangeNotifier {
     notifyListeners();
   }
 
-  void removeFromCart(int id) {
+  void removeFromCart(String id) {
     List local = GetStorage().read("mycart");
     final exists = local.where((value) => (value["id"] == id));
     if (exists.isNotEmpty) {

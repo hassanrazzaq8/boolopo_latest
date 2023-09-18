@@ -30,7 +30,7 @@ class _LoginScreenState extends State<LoginScreen> {
   String? useremail;
   GetStorage box = GetStorage();
 
-  void login(context) async {
+  void login() async {
     Loader.showLoader(context: context);
     try {
       http.Response response = await http.post(
@@ -56,21 +56,22 @@ class _LoginScreenState extends State<LoginScreen> {
           box.write(AppString.userName, username);
           box.write(AppString.userId, userid);
           box.write(AppString.email, useremail);
-          Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(
-              builder: (context) => BottomBarScreen(),
-            ),
-            (route) => false,
+          box.write(AppString.firstName, data["first_name"]);
+          box.write(AppString.lastName, data["last_name"]);
+
+          Get.offAllNamed(
+            AppRoutes.bottomBarScreen,
           );
           debugPrint("After login the userid : ${box.read(AppString.userId)}");
         } else {
+          Loader.hideLoader(context);
           showSnackBar(data["status"], context);
         }
       } else {
+        Loader.hideLoader(context);
         showSnackBar(AppString.badHappenedError, context);
       }
-      Loader.hideLoader(context);
+      //
     } catch (e) {
       print(e);
       Loader.hideLoader(context);
@@ -212,7 +213,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               final isValid = formkey.currentState!.validate();
                               final isvalid = formkey2.currentState!.validate();
                               if (isValid && isvalid) {
-                                login(context);
+                                login();
                               }
                             },
                           ),
@@ -229,7 +230,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                 Get.offAllNamed(
                                   AppRoutes.bottomBarScreen,
                                 );
-
                               },
                             ),
                           ),

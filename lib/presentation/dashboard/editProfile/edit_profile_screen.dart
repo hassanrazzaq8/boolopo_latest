@@ -1,12 +1,15 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:watch_app/api/url.dart';
 import 'package:watch_app/core/utils/app_string.dart';
 import 'package:watch_app/presentation/commamn/app_bar.dart';
 import 'package:watch_app/presentation/commamn/clip_path.dart';
 import 'package:watch_app/presentation/dashboard/editProfile/edit_profile_controller.dart';
+import 'package:watch_app/utills/custom_dialogue.dart';
+import 'package:watch_app/utills/loader.dart';
+import 'package:watch_app/utills/storage.dart';
 import 'package:watch_app/widgets/custom_textfield.dart';
 import 'package:http/http.dart' as http;
 import '../../../core/app_export.dart';
@@ -24,36 +27,59 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   TextEditingController userid = TextEditingController();
   TextEditingController firstname = TextEditingController();
   TextEditingController lastname = TextEditingController();
-  int id = GetStorage().read("userId");
-  String? fname = GetStorage().read("firstName");
-  String? lname = GetStorage().read("lastName");
-  String? pimage;
-  File? profile_image;
+  int id = GetStorage().read(AppString.userId);
+  String? imageUrl;
+
   Future edit() async {
     try {
-      const url = "https://boolopo.co/apies/editprofile.php";
-      final response = await http.post(Uri.parse(url), body: {
-        "userid": firstname.text.toString(),
-        "first_name": firstname.text.toString(),
-        "last_name": lastname.text.toString(),
-        profile_image: _con.profileImage.value.toString(),
-      });
-      if (response.statusCode == 200) {
-        var data = jsonDecode(response.body);
-        fname = data["first_name"];
-        lname = data["last_name"];
-        pimage = data[profile_image];
-        print(data);
-        print("Profile updated successfuly");
+      Loader.showLoader(context: context);
+      var request = http.MultipartRequest('POST', Uri.parse(editProfileApi));
+      request.fields['userid'] = id.toString();
+      request.fields['first_name'] = firstname.text.trim();
+      request.fields['last_name'] = lastname.text.trim();
+      if ( _con.profileImage.value.path != "") {
+        var image = await http.MultipartFile.fromPath(
+            'profile_image', _con.profileImage.value.path);
+        request.files.add(image);
       }
+      final response = await request.send();
+      if (response.statusCode == 200) {
+        var responseBody = await response.stream.bytesToString();
+        var data = jsonDecode(responseBody);
+        Loader.hideLoader(context);
+        if (data["status"] == "success") {
+          print(data);
+          debugPrint("Profile updated successfuly");
+          Storage.writeData(AppString.firstName, data["first_name"]);
+          Storage.writeData(AppString.lastName, data["last_name"]);
+          Storage.writeData(AppString.profileImage, data["profile_image"]);
+          customDialogue(message: "Profile details updated successfully");
+        } else {
+          customDialogue(message: data["status"]);
+        }
+      }
+
+
     } catch (err) {
-      throw Exception(err.toString());
+      Loader.hideLoader(context);
+      customDialogue(message: AppString.badHappenedError);
     }
-    GetStorage box = GetStorage();
-    box.write("firstName", fname);
-    box.write("lastName", lname);
-    box.write("userId", id);
-    box.write("profileImage", pimage);
+    // GetStorage box = GetStorage();
+    // box.write("firstName", fname);
+    // box.write("lastName", lname);
+    // // box.write("userId", id);
+    // box.write("profileImage", pimage);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    firstname =
+        TextEditingController(text: Storage.readData(AppString.firstName));
+    lastname =
+        TextEditingController(text: Storage.readData(AppString.lastName));
+    imageUrl = Storage.readData(AppString.profileImage);
+    debugPrint("image url is : $imageUrl");
   }
 
   @override
@@ -86,31 +112,34 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       alignment: Alignment.bottomCenter,
                       children: [
                         Obx(
-                          () => Container(
-                            height: 110,
-                            width: 110,
-                            decoration: BoxDecoration(
-                              color: Colors.grey,
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: Colors.white,
-                                width: 3,
-                              ),
-                              image: DecorationImage(
-                                fit: BoxFit.contain,
-                                image: _con.profileImage.value.path.isEmpty
-                                    ? _con.profileUrl.value != ""
-                                        // ? NetworkImage(
-                                        //     _con.profileUrl.value,
-                                        //   )
-                                        ? const NetworkImage(
-                                            "https://sin5.org/images/faces/1.jpg")
-                                        : const AssetImage(
-                                            ImageConstant.cam,
-                                          ) as ImageProvider
-                                    : FileImage(
-                                        _con.profileImage.value,
-                                      ),
+                          () => GestureDetector(
+                            onTap: () {
+                              _con.pickProfileFile(context);
+                            },
+                            child: Container(
+                              height: 110,
+                              width: 110,
+                              decoration: BoxDecoration(
+                                color: Colors.grey,
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: Colors.white,
+                                  width: 3,
+                                ),
+                                image: DecorationImage(
+                                  fit: BoxFit.cover,
+                                  image: _con.profileImage.value.path.isEmpty
+                                      ? imageUrl != null?imageUrl!.isNotEmpty
+                                          ? NetworkImage(imageUrl!)
+                                          :const AssetImage(
+                                    ImageConstant.profile,
+                                  ) as ImageProvider: const AssetImage(
+                                              ImageConstant.profile,
+                                            )
+                                      : FileImage(
+                                          _con.profileImage.value,
+                                        ),
+                                ),
                               ),
                             ),
                           ),
@@ -145,26 +174,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  titleText(AppString.userId),
-                  hSizedBox6,
-                  CustomTextfiled(
-                    controller: userid,
-                    shadow: true,
-                    hintText: id.toString(),
-                    onChange: (value) {
-                      id = int.parse(value);
-                    },
-                  ),
-                  hSizedBox4,
                   titleText(AppString.firstName),
                   hSizedBox6,
                   CustomTextfiled(
                     controller: firstname,
                     shadow: true,
-                    hintText: fname,
-                    onChange: (value) {
-                      fname = value;
-                    },
+                    hintText: "Firstname",
                   ),
                   hSizedBox4,
                   titleText(AppString.lastName),
@@ -172,12 +187,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   CustomTextfiled(
                     controller: lastname,
                     shadow: true,
-                    hintText: lname,
+                    hintText: "Lastname",
                     radius: 30,
                     border: true,
-                    onChange: (value) {
-                      fname = value;
-                    },
                   ),
                   hSizedBox4,
                   titleText(AppString.aboutme),
@@ -199,7 +211,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       width: Get.width / 2,
                       onPressed: () {
                         edit();
-                        Navigator.pop(context);
                       },
                     ),
                   ),

@@ -1,4 +1,6 @@
+
 import 'package:google_fonts/google_fonts.dart';
+import 'package:watch_app/utills/storage.dart';
 
 import '../../../core/app_export.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +12,7 @@ class SplashScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Storage.init();
     Get.put(
       SplashController(),
     );

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:watch_app/core/app_export.dart';
-import 'package:watch_app/models/grid.dart';
+import 'package:watch_app/models/product_tile.dart';
 import 'package:watch_app/presentation/dashboard/productDetails/product_detail.dart';
 
 class BagGrid extends StatelessWidget {

@@ -3,6 +3,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:watch_app/core/utils/app_string.dart';
 import 'package:watch_app/presentation/bottomBar/bottombar_controller.dart';
 import 'package:watch_app/presentation/commamn/clip_path.dart';
+import 'package:watch_app/utills/storage.dart';
 
 import '../../../core/app_export.dart';
 
@@ -12,8 +13,8 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String username = GetStorage().read("username");
-    String email = GetStorage().read("userEmail");
+    String username = Storage.readData(AppString.userName) ?? "";
+    String email = Storage.readData(AppString.email) ?? "";
     return Scaffold(
       body: SingleChildScrollView(
         physics: const ClampingScrollPhysics(),
@@ -36,10 +37,15 @@ class ProfileScreen extends StatelessWidget {
                           color: Colors.grey.shade200,
                           shape: BoxShape.circle,
                           border: Border.all(color: Colors.white, width: 4),
-                          image: const DecorationImage(
-                            fit: BoxFit.contain,
-                            image: NetworkImage(
-                                "https://sin5.org/images/faces/1.jpg"),
+                          image: DecorationImage(
+                            fit: BoxFit.cover,
+                            image: NetworkImage(Storage.readData(
+                                        AppString.profileImage) !=
+                                    null
+                                ? Storage.readData(AppString.profileImage)!.isNotEmpty
+                                ? Storage.readData(AppString.profileImage)!
+                                    : "https://sin5.org/images/faces/1.jpg"
+                                    : "https://sin5.org/images/faces/1.jpg"),
                           ),
                         ),
                       ),

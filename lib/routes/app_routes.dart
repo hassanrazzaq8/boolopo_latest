@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:watch_app/prects.dart';
+import 'package:watch_app/presentation/address/add_address.dart';
 import 'package:watch_app/presentation/dashboard/addnewcard/add_new_card_screen.dart';
 
 import '../presentation/auth/changepassword/change_password_screen.dart';
@@ -58,6 +59,7 @@ class AppRoutes {
   static String filterScreen = '/filterScreen';
   static String trackOrderScreen = '/trackOrderScreen';
   static String splashScreen = '/splashScreen';
+  static String addressScreen = '/addressScreen';
 
   static List<GetPage> pages = [
     GetPage(name: loginScreen, page: () => const LoginScreen()),
@@ -87,5 +89,6 @@ class AppRoutes {
     GetPage(name: filterScreen, page: () => FilterScreen()),
     GetPage(name: trackOrderScreen, page: () => TrackOrderScreen()),
     GetPage(name: splashScreen, page: () => const SplashScreen()),
+    GetPage(name: addressScreen, page: () => const AddAddress()),
   ];
 }

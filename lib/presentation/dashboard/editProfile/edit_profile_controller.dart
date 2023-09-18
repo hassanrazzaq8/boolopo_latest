@@ -226,36 +226,14 @@ class EditProfileController extends GetxController {
       }
     }
     if (pickedFile != null) {
-      CroppedFile? croppedFile = await ImageCropper().cropImage(
-          sourcePath: pickedFile.path,
-          aspectRatio: const CropAspectRatio(ratioX: 300, ratioY: 300),
-          compressQuality: 50,
-          uiSettings: [
-            AndroidUiSettings(
-              toolbarTitle: 'Edit',
-              statusBarColor: AppColors.appColor,
-              toolbarColor: AppColors.yellowColor,
-              toolbarWidgetColor: Colors.white,
-              initAspectRatio: CropAspectRatioPreset.square,
-              lockAspectRatio: true,
-            ),
-            IOSUiSettings(
-              title: 'Edit',
-            ),
-          ]);
-      if (croppedFile != null) {
-        profileImage.value = File(croppedFile.path);
+
+        profileImage.value = File(pickedFile.path);
         if (kDebugMode) {
           print("===IMAGE SIZE==");
           print(profileImage.value.readAsBytesSync().lengthInBytes);
         }
-
-        multipartFile = dio.MultipartFile.fromFileSync(
-          File(croppedFile.path).path,
-          filename: path.basename(File(croppedFile.path).path),
-        );
         // edit();
-      }
+
     } else {
       return;
     }

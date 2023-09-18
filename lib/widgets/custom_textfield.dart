@@ -159,6 +159,8 @@ class CustomTextfiled extends StatelessWidget {
     this.bgcolor,
   }) : super(key: key);
 
+
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -197,6 +199,7 @@ class CustomTextfiled extends StatelessWidget {
             maxLines: maxLines,
             decoration: InputDecoration(
               hintText: hintText,
+
               isCollapsed: true,
               contentPadding: const EdgeInsets.all(15),
               fillColor: bgcolor ??
@@ -222,7 +225,7 @@ class CustomTextfiled extends StatelessWidget {
               suffixIcon: suffixIcon,
               hintStyle: const TextStyle(
                 fontSize: 15.0,
-                color: Colors.black,
+                color: Colors.grey,
               ),
               focusedErrorBorder: border == true
                   ? OutlineInputBorder(

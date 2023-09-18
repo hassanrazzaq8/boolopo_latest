@@ -104,6 +104,7 @@ class AppString {
   static String cardNumber = "Card Number :";
   static String securityCode = "Security Code";
   static String profile = "Profile";
+  static String profileImage = "profile_image";
   static String pname = "William Rouse";
   static String pemail = "williamrouse51@gmail.com";
   static String myCart = "My Cart";

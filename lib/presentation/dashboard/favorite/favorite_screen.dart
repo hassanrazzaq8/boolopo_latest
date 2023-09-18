@@ -35,12 +35,15 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
 
     return Scaffold(
       body: x.isEmpty
-          ? Column(
-              children: [
-                Image.asset(ImageConstant.noFav),
-                const Text("No favorite yet")
-              ],
-            )
+        ?const Center(
+        child:  Text("No favorite yet"),
+      )
+          // ? Column(
+          //     children: [
+          //       Image.asset(ImageConstant.noFav),
+          //       const Text("No favorite yet")
+          //     ],
+          //   )
           : Padding(
               padding: const EdgeInsets.symmetric(horizontal: 18.0),
               child: GridView.builder(
@@ -99,10 +102,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => ProductDetail(
-                                      id: 1,
-                                      image: item["image"],
-                                      name: item["title"],
-                                      price: item["price"],
+                                      id:item["id"],
                                     ),
                                   ),
                                 );

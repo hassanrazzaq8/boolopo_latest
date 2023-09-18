@@ -36,7 +36,7 @@ class FavoProvider extends ChangeNotifier {
   List _hallo = [];
 
   List get hallo => _hallo;
-  void favorite(String word, String price, String image) {
+  void favorite(String word, String price, String image,String id) {
     if (GetStorage().read("fav") != null) {
       _hallo = GetStorage().read("fav");
     }
@@ -44,6 +44,7 @@ class FavoProvider extends ChangeNotifier {
 
     if (exists.isEmpty) {
       _hallo.add({
+        "id":id,
         "title": word,
         "price": price,
         "image": image,

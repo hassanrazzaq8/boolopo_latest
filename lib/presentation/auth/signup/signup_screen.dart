@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:watch_app/core/utils/app_string.dart';
 import 'package:watch_app/presentation/auth/login/login_screen.dart';
 import 'package:watch_app/presentation/commamn/app_button.dart';

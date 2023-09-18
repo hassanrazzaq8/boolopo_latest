@@ -1,28 +1,27 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:watch_app/api/api.dart';
+import 'package:watch_app/api/models/product_details_model.dart';
+import 'package:watch_app/api/url.dart';
 import 'package:watch_app/core/app_export.dart';
-import 'package:watch_app/presentation/auth/login/login_screen.dart';
 import 'package:watch_app/presentation/bottomBar/bottombar_screen.dart';
 import 'package:watch_app/providers/cart_provider.dart';
 import 'package:watch_app/utills/color.dart';
+import 'package:watch_app/utills/custom_dialogue.dart';
+import 'package:watch_app/utills/loader.dart';
 import 'package:watch_app/utills/snack_bar.dart';
-
-import '../../../models/cart_model.dart';
+import 'package:watch_app/utills/storage.dart';
 
 class ProductDetail extends StatefulWidget {
   const ProductDetail({
     Key? key,
-    required this.name,
-    required this.price,
-    required this.image,
+
     required this.id,
   }) : super(key: key);
-  final String image;
-  final String name;
-  final String price;
-  final int id;
+
+  final String id;
 
   @override
   State<ProductDetail> createState() => _ProductDetailState();
@@ -34,13 +33,12 @@ class _ProductDetailState extends State<ProductDetail> {
   bool isRated = false;
   TextEditingController sizeController = TextEditingController();
   final double count = 1;
-  var x;
+
   @override
   void initState() {
     super.initState();
-    x = GetStorage().read("isIt");
+    getProductDetails(widget.id);
   }
-
   @override
   void dispose() {
     super.dispose();
@@ -103,8 +101,8 @@ class _ProductDetailState extends State<ProductDetail> {
             ),
           ],
         ),
-        drawer: BottomBarScreen().drawerOpen(),
-        bottomNavigationBar: Padding(
+        drawer: BottomBarScreenState().drawerOpen(),
+        bottomNavigationBar:detailsFetch? Padding(
           padding: const EdgeInsets.only(bottom: 18.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -126,13 +124,13 @@ class _ProductDetailState extends State<ProductDetail> {
                     ),
                     minimumSize: const Size(150, 50)),
                 onPressed: () {
-                  if (x != null) {
+                  if (Storage.isUserLogin) {
                     provider.addToCart(
                       widget.id,
-                      widget.name,
-                      widget.price,
+                      productDetailsModel.name??"",
+                      productDetailsModel.price??"",
                       count,
-                      widget.image,
+                      productDetailsModel.images?.first.src??"",
                     );
                     showSnackBar("Product added to your cart", context);
                     Navigator.pop(context);
@@ -151,8 +149,8 @@ class _ProductDetailState extends State<ProductDetail> {
               ),
             ],
           ),
-        ),
-        body: SingleChildScrollView(
+        ):const SizedBox.shrink(),
+        body:detailsFetch? SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 18.0),
             child: Column(
@@ -160,7 +158,7 @@ class _ProductDetailState extends State<ProductDetail> {
                 Align(
                   alignment: Alignment.topCenter,
                   child: Text(
-                    widget.name,
+                    productDetailsModel.name??"",
                     style: GoogleFonts.oswald(
                       fontWeight: FontWeight.bold,
                       fontSize: 20,
@@ -180,31 +178,25 @@ class _ProductDetailState extends State<ProductDetail> {
                       SizedBox(
                         height: MediaQuery.of(context).size.height * .40,
                         width: double.infinity,
-                        child: Align(
-                          child: Image.network(
-                            widget.image,
-                            height: size == 1
-                                ? MediaQuery.of(context).size.height * .25
-                                : size == 2
-                                    ? MediaQuery.of(context).size.height * .30
-                                    : size == 3
-                                        ? MediaQuery.of(context).size.height *
-                                            .35
-                                        : size == 4
-                                            ? MediaQuery.of(context)
-                                                    .size
-                                                    .height *
-                                                .38
-                                            : size == 5
-                                                ? MediaQuery.of(context)
-                                                        .size
-                                                        .height *
-                                                    .40
-                                                : MediaQuery.of(context)
-                                                        .size
-                                                        .height *
-                                                    .40,
-                          ),
+                        child:Image.network(
+                          productDetailsModel.images?.first.src??"",
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Icon(
+                              Icons.image_not_supported_rounded,
+                              size: Get.height * .3,
+                              color: Colors.black26,
+                            );
+                          },
+                          loadingBuilder: (context, child, loadingProgress) {
+                            if (loadingProgress != null) {
+                              return const Center(
+                                child: CupertinoActivityIndicator(),
+                              );
+                            } else {
+                              return child;
+                            }
+                          },
                         ),
                       ),
                       const SizedBox(
@@ -216,7 +208,7 @@ class _ProductDetailState extends State<ProductDetail> {
                           Column(
                             children: [
                               Text(
-                                " \$ ${widget.price}",
+                                " \$ ${ productDetailsModel.price??""}",
                                 style: GoogleFonts.poppins(
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
@@ -239,9 +231,9 @@ class _ProductDetailState extends State<ProductDetail> {
                               Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  rate(false),
-                                  rate(false),
-                                  rate(false),
+                                  rate(true),
+                                  rate(true),
+                                  rate(true),
                                   rate(false),
                                   rate(false),
                                 ],
@@ -263,268 +255,6 @@ class _ProductDetailState extends State<ProductDetail> {
                 const SizedBox(
                   height: 10,
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      children: [
-                        Container(
-                          width: 2,
-                          height: 10,
-                          color: const Color.fromARGB(248, 9, 34, 90),
-                        ),
-                        InkWell(
-                          onTap: () {
-                            setState(() {
-                              size = 1;
-                            });
-                          },
-                          child: size == 1
-                              ? DecoratedBox(
-                                  decoration: BoxDecoration(
-                                    // color: Colors.red,
-                                    borderRadius: BorderRadius.circular(
-                                      100,
-                                    ),
-                                    border: Border.all(
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                  child: CircleAvatar(
-                                    backgroundColor: Colors.transparent,
-                                    radius: 40,
-                                    child: Text(
-                                      "41",
-                                      style: GoogleFonts.roboto(
-                                        fontSize: 40,
-                                        color: Colors.grey,
-                                      ),
-                                    ),
-                                  ),
-                                )
-                              : Text(
-                                  "41",
-                                  style: GoogleFonts.roboto(
-                                    fontSize: 20,
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                        )
-                      ],
-                    ),
-                    // Stack(
-                    //   children: [
-                    //     Image.network(
-                    //       "https://www.pngkey.com/png/full/896-8964716_line-curve-png.png",
-                    //       color: Colors.green,
-                    //       height: 50,
-                    //       width: 50,
-                    //     ),
-                    //     Text(
-                    //       "41",
-                    //       style: GoogleFonts.roboto(
-                    //         fontSize: 20,
-                    //         color: Colors.grey,
-                    //       ),
-                    //     ),
-                    //     Text(
-                    //       "size",
-                    //       style: GoogleFonts.roboto(
-                    //         // fontSize: 20,
-                    //         color: Colors.grey,
-                    //       ),
-                    //     ),
-                    //   ],
-                    // ),
-                    Column(
-                      children: [
-                        Container(
-                          width: 2,
-                          height: 10,
-                          color: const Color.fromARGB(248, 9, 34, 90),
-                        ),
-                        InkWell(
-                          onTap: () {
-                            setState(() {
-                              size = 2;
-                            });
-                          },
-                          child: size == 2
-                              ? DecoratedBox(
-                                  decoration: BoxDecoration(
-                                    // color: Colors.red,
-                                    borderRadius: BorderRadius.circular(
-                                      100,
-                                    ),
-                                    border: Border.all(
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                  child: CircleAvatar(
-                                    backgroundColor: Colors.transparent,
-                                    radius: 40,
-                                    child: Text(
-                                      "42",
-                                      style: GoogleFonts.roboto(
-                                        fontSize: 40,
-                                        color: Colors.grey,
-                                      ),
-                                    ),
-                                  ),
-                                )
-                              : Text(
-                                  "42",
-                                  style: GoogleFonts.roboto(
-                                    fontSize: 20,
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                        )
-                      ],
-                    ),
-                    Column(
-                      children: [
-                        Container(
-                          width: 2,
-                          height: 10,
-                          color: const Color.fromARGB(248, 9, 34, 90),
-                        ),
-                        InkWell(
-                          onTap: () {
-                            setState(() {
-                              size = 3;
-                            });
-                          },
-                          child: size == 3
-                              ? DecoratedBox(
-                                  decoration: BoxDecoration(
-                                    // color: Colors.red,
-                                    borderRadius: BorderRadius.circular(
-                                      100,
-                                    ),
-                                    border: Border.all(
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                  child: CircleAvatar(
-                                    backgroundColor: Colors.transparent,
-                                    radius: 40,
-                                    child: Text(
-                                      "43",
-                                      style: GoogleFonts.roboto(
-                                        fontSize: 40,
-                                        color: Colors.grey,
-                                      ),
-                                    ),
-                                  ),
-                                )
-                              : Text(
-                                  "43",
-                                  style: GoogleFonts.roboto(
-                                    fontSize: 20,
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                        )
-                      ],
-                    ),
-                    Column(
-                      children: [
-                        Container(
-                          width: 2,
-                          height: 10,
-                          color: const Color.fromARGB(248, 9, 34, 90),
-                        ),
-                        InkWell(
-                          onTap: () {
-                            setState(() {
-                              size = 4;
-                            });
-                          },
-                          child: size == 4
-                              ? DecoratedBox(
-                                  decoration: BoxDecoration(
-                                    // color: Colors.red,
-                                    borderRadius: BorderRadius.circular(
-                                      100,
-                                    ),
-                                    border: Border.all(
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                  child: CircleAvatar(
-                                    backgroundColor: Colors.transparent,
-                                    radius: 40,
-                                    child: Text(
-                                      "44",
-                                      style: GoogleFonts.roboto(
-                                        fontSize: 40,
-                                        color: Colors.grey,
-                                      ),
-                                    ),
-                                  ),
-                                )
-                              : Text(
-                                  "44",
-                                  style: GoogleFonts.roboto(
-                                    fontSize: 20,
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                        )
-                      ],
-                    ),
-                    Column(
-                      children: [
-                        Container(
-                          width: 2,
-                          height: 10,
-                          color: const Color.fromARGB(248, 9, 34, 90),
-                        ),
-                        InkWell(
-                          onTap: () {
-                            setState(() {
-                              size = 5;
-                            });
-                          },
-                          child: size == 5
-                              ? DecoratedBox(
-                                  decoration: BoxDecoration(
-                                    // color: Colors.red,
-                                    borderRadius: BorderRadius.circular(
-                                      100,
-                                    ),
-                                    border: Border.all(
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                  child: CircleAvatar(
-                                    backgroundColor: Colors.transparent,
-                                    radius: 40,
-                                    child: Text(
-                                      "45",
-                                      style: GoogleFonts.roboto(
-                                        fontSize: 40,
-                                        color: Colors.grey,
-                                      ),
-                                    ),
-                                  ),
-                                )
-                              : Text(
-                                  "45",
-                                  style: GoogleFonts.roboto(
-                                    fontSize: 20,
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                        )
-                      ],
-                    ),
-                  ],
-                ),
-                const SizedBox(
-                  height: 5,
-                ),
                 const Align(
                   alignment: Alignment.topLeft,
                   child: Text("COULDN'T FIND YOUR SIZE?"),
@@ -541,8 +271,39 @@ class _ProductDetailState extends State<ProductDetail> {
               ],
             ),
           ),
-        ),
+        ):Loader.apiLoading(color: Colors.black),
       ),
     );
+  }
+
+  ProductDetailsModel productDetailsModel = ProductDetailsModel();
+bool detailsFetch=false;
+  Future<void> getProductDetails(String productId) async {
+    try {
+      Map<String, dynamic> parameters = {
+        "consumer_key": "ck_f5374351dfaa2587fbdf22bc691eeb88e87731bc",
+        "consumer_secret": "cs_01c326a844bbdf18e1b54a2de7e5a238f8e73eb5",
+      };
+      var data = await Api.getMethod(
+        context,
+        url: "$getProductDetailsApi/$productId",
+        parameters: parameters,
+      );
+
+      productDetailsModel = ProductDetailsModel.fromJson(data);
+      if (productDetailsModel.name == null) {
+        customDialogue(
+          message:
+              "Something went wrong Please Check the internet connection or restart the application",
+        );
+      } else {
+        debugPrint("product name is : ${productDetailsModel.name}");
+      }
+      setState(() {
+        detailsFetch=true;
+      });
+    } catch (err) {
+      debugPrint("error while fetching product details : $err");
+    }
   }
 }
