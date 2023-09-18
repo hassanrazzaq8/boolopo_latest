@@ -194,7 +194,7 @@ class _CartState extends State<Cart> {
                     width: Get.width / 1.3,
                     color: themeColor,
                     onPressed: () {
-                     Get.toNamed(AppRoutes.addressScreen);
+                     Get.toNamed(AppRoutes.orderSummaryScreen);
                     },
                   ),
                   hSizedBox6,

@@ -79,6 +79,7 @@ class AppString {
   static String orderSummary = "Order Summary";
   static String selectdeliveryaddress = "Select delivery address";
   static String addNewAddress = "Add New Address";
+  static String address = "address";
   static String office = "Office";
   static String myHome = "My Home";
   static String info =

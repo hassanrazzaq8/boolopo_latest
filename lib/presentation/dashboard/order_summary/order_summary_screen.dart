@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:watch_app/core/app_export.dart';
 import 'package:watch_app/core/utils/app_string.dart';
 import 'package:watch_app/presentation/commamn/app_bar.dart';
@@ -6,9 +7,27 @@ import 'package:watch_app/presentation/commamn/app_button.dart';
 
 import 'order_summary_controller.dart';
 
-class OrderSummaryScreen extends StatelessWidget {
+class OrderSummaryScreen extends StatefulWidget {
   OrderSummaryScreen({Key? key}) : super(key: key);
+
+  @override
+  State<OrderSummaryScreen> createState() => _OrderSummaryScreenState();
+}
+
+class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
   final OrderSummaryController _con = Get.put(OrderSummaryController());
+  List storeAddresses = [];
+
+  @override
+  void initState() {
+    super.initState();
+    if (GetStorage().read(AppString.address) != null) {
+      storeAddresses = GetStorage().read(AppString.address);
+    } else {
+      storeAddresses = [];
+    }
+    debugPrint("store addresses $storeAddresses");
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,38 +63,43 @@ class OrderSummaryScreen extends StatelessWidget {
                 ),
               ),
               hSizedBox10,
-              Container(
-                height: 50,
-                width: Get.width,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(25),
-                  border: Border.all(
-                    color: const Color(0xffD2D2D2),
-                  ),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Image.asset(
-                      ImageConstant.addnewaddress,
-                      height: 25,
-                      width: 25,
+              GestureDetector(
+                onTap: () {
+                  Get.toNamed(AppRoutes.addressScreen);
+                },
+                child: Container(
+                  height: 50,
+                  width: Get.width,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(25),
+                    border: Border.all(
+                      color: const Color(0xffD2D2D2),
                     ),
-                    wSizedBox10,
-                    Text(
-                      AppString.addNewAddress,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w500,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset(
+                        ImageConstant.addnewaddress,
+                        height: 25,
+                        width: 25,
                       ),
-                    )
-                  ],
+                      wSizedBox10,
+                      Text(
+                        AppString.addNewAddress,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          color: Colors.black,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      )
+                    ],
+                  ),
                 ),
               ),
               ListView.builder(
-                itemCount: 3,
+                itemCount: storeAddresses.length,
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 padding: EdgeInsets.zero,
@@ -124,25 +148,25 @@ class OrderSummaryScreen extends StatelessWidget {
                                         ),
                                       ),
                                       hSizedBox4,
-                                      const Text(
-                                        "James A.",
-                                        style: TextStyle(
+                                       Text(
+                                       storeAddresses[index]["name"],
+                                        style: const TextStyle(
                                           fontSize: 14,
                                           fontWeight: FontWeight.w500,
                                         ),
                                       ),
                                       hSizedBox4,
-                                      const Text(
-                                        "+781-343-1253",
-                                        style: TextStyle(
+                                       Text(
+                                        storeAddresses[index]["phoneNumber"],
+                                        style: const TextStyle(
                                           fontSize: 14,
                                           fontWeight: FontWeight.w500,
                                         ),
                                       ),
                                       hSizedBox4,
-                                      const Text(
-                                        "717 Romani Street, Boston, Massachusetts 02110, USA",
-                                        style: TextStyle(
+                                       Text(
+                                         storeAddresses[index]["address"],
+                                        style: const TextStyle(
                                           fontSize: 14,
                                           fontWeight: FontWeight.w500,
                                           color: Color(0xff707070),
