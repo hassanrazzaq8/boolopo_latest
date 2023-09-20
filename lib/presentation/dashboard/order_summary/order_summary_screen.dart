@@ -4,6 +4,9 @@ import 'package:watch_app/core/app_export.dart';
 import 'package:watch_app/core/utils/app_string.dart';
 import 'package:watch_app/presentation/commamn/app_bar.dart';
 import 'package:watch_app/presentation/commamn/app_button.dart';
+import 'package:watch_app/presentation/payment/payment_screen.dart';
+import 'package:watch_app/utills/custom_dialogue.dart';
+import 'package:watch_app/utills/loader.dart';
 
 import 'order_summary_controller.dart';
 
@@ -17,6 +20,7 @@ class OrderSummaryScreen extends StatefulWidget {
 class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
   final OrderSummaryController _con = Get.put(OrderSummaryController());
   List storeAddresses = [];
+  List cartItems = [];
 
   @override
   void initState() {
@@ -26,6 +30,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
     } else {
       storeAddresses = [];
     }
+    cartItems = GetStorage().read("mycart") ?? [];
     debugPrint("store addresses $storeAddresses");
   }
 
@@ -41,10 +46,20 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
       floatingActionButton: AppButton(
         width: Get.width / 2,
         text: AppString.payment,
-        onPressed: () {
-          Get.toNamed(
-            AppRoutes.paymentScreen,
-          );
+        onPressed: () async {
+          // if (storeAddresses.isEmpty) {
+          //   customDialogue(
+          //       message:
+          //           "Kindly consider to add address regarding place your order");
+          // } else {
+          //   Loader.showLoader();
+          //   await _con.placeOrder(
+          //       cart: cartItems,
+          //       shipperDetails: storeAddresses[_con.isSelectAdd.value]);
+          //   Loader.hideLoader(context);
+          // }
+          // _con.paymentMethodDialogue();
+          Get.to(()=> const WebViewExample());
         },
       ),
       body: SingleChildScrollView(
@@ -65,7 +80,9 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
               hSizedBox10,
               GestureDetector(
                 onTap: () {
-                  Get.toNamed(AppRoutes.addressScreen);
+                  Get.toNamed(AppRoutes.addressScreen)?.then((value) {
+                    setState(() {});
+                  });
                 },
                 child: Container(
                   height: 50,
@@ -140,23 +157,23 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      Text(
-                                        AppString.office,
-                                        style: const TextStyle(
+                                      const Text(
+                                        "Address",
+                                        style: TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.w600,
                                         ),
                                       ),
                                       hSizedBox4,
-                                       Text(
-                                       storeAddresses[index]["name"],
+                                      Text(
+                                        "${storeAddresses[index]["firstName"]} ${storeAddresses[index]["lastName"]}",
                                         style: const TextStyle(
                                           fontSize: 14,
                                           fontWeight: FontWeight.w500,
                                         ),
                                       ),
                                       hSizedBox4,
-                                       Text(
+                                      Text(
                                         storeAddresses[index]["phoneNumber"],
                                         style: const TextStyle(
                                           fontSize: 14,
@@ -164,8 +181,8 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                                         ),
                                       ),
                                       hSizedBox4,
-                                       Text(
-                                         storeAddresses[index]["address"],
+                                      Text(
+                                        storeAddresses[index]["address"],
                                         style: const TextStyle(
                                           fontSize: 14,
                                           fontWeight: FontWeight.w500,
@@ -231,38 +248,38 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                 },
               ),
               hSizedBox16,
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                width: Get.width,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: const Color(0xffF3F3F3),
-                  border: Border.all(
-                    color: const Color(0xffD2D2D2),
-                  ),
-                ),
-                child: Row(
-                  children: [
-                    Image.asset(
-                      ImageConstant.info,
-                      height: 30,
-                      width: 30,
-                    ),
-                    wSizedBox12,
-                    Expanded(
-                      child: Text(
-                        AppString.info,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.normal,
-                          fontSize: 13,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              hSizedBox36,
+              // Container(
+              //   padding:
+              //       const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              //   width: Get.width,
+              //   decoration: BoxDecoration(
+              //     borderRadius: BorderRadius.circular(10),
+              //     color: const Color(0xffF3F3F3),
+              //     border: Border.all(
+              //       color: const Color(0xffD2D2D2),
+              //     ),
+              //   ),
+              //   child: Row(
+              //     children: [
+              //       Image.asset(
+              //         ImageConstant.info,
+              //         height: 30,
+              //         width: 30,
+              //       ),
+              //       wSizedBox12,
+              //       Expanded(
+              //         child: Text(
+              //           AppString.info,
+              //           style: const TextStyle(
+              //             fontWeight: FontWeight.normal,
+              //             fontSize: 13,
+              //           ),
+              //         ),
+              //       ),
+              //     ],
+              //   ),
+              // ),
+              // hSizedBox36,
             ],
           ),
         ),

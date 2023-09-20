@@ -50,7 +50,7 @@ class _CartState extends State<Cart> {
               child: ListView.builder(
                 itemCount: test.length,
                 itemBuilder: (context, index) {
-                  String price = test[index]["price"];
+                  String price = test[index]["product_price"];
                   double p = double.parse(price);
                   return Container(
                     margin: EdgeInsets.symmetric(vertical: Get.height * .02),
@@ -77,7 +77,7 @@ class _CartState extends State<Cart> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  test[index]["name"],
+                                  test[index]["product_name"],
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
                                 ),
@@ -86,7 +86,7 @@ class _CartState extends State<Cart> {
                                     // mainAxisAlignment: MainAxisAlignment.end,
                                     children: [
                                       Text(
-                                        " \$${p * test[index]["count"]}    ",
+                                        " \$${p * test[index]["product_qty"]}    ",
                                         style: TextStyle(
                                           color: themeColor,
                                           fontWeight: FontWeight.bold,
@@ -97,10 +97,10 @@ class _CartState extends State<Cart> {
                                         onPressed: () {
                                           setState(
                                             () {
-                                              test[index]["count"] == 1
+                                              test[index]["product_qty"] == 1
                                                   ? null
-                                                  : test[index]["count"] >= 1
-                                                      ? test[index]["count"]--
+                                                  : test[index]["product_qty"] >= 1
+                                                      ? test[index]["product_qty"]--
                                                       : null;
                                             },
                                           );
@@ -111,7 +111,7 @@ class _CartState extends State<Cart> {
                                         ),
                                       ),
                                       Text(
-                                        test[index]["count"].toString(),
+                                        test[index]["product_qty"].toString(),
                                         style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: Get.height * .025,
@@ -120,7 +120,7 @@ class _CartState extends State<Cart> {
                                       IconButton(
                                         onPressed: () {
                                           setState(() {
-                                            test[index]["count"]++;
+                                            test[index]["product_qty"]++;
                                           });
                                         },
                                         icon: Icon(
@@ -141,8 +141,8 @@ class _CartState extends State<Cart> {
                           Align(
                             child: IconButton(
                                 onPressed: () {
-                                  debugPrint("id is : ${test[index]["id"]}");
-                                  provider.removeFromCart(test[index]["id"]);
+                                  debugPrint("id is : ${test[index]["product_id"]}");
+                                  provider.removeFromCart(test[index]["product_id"]);
                                 },
                                 icon: const Icon(Icons.delete_forever)),
                           ),

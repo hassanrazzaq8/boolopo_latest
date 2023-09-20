@@ -14,10 +14,10 @@ class ProviderCart extends ChangeNotifier {
     if (exists.isEmpty) {
       _cart.add(
         {
-          "id": id,
-          "name": title,
-          "price": price,
-          "count": quantity,
+          "product_id": id,
+          "product_name": title,
+          "product_price": price,
+          "product_qty": quantity,
           "image": image,
         },
       );
@@ -47,9 +47,9 @@ class ProviderCart extends ChangeNotifier {
       _cart = GetStorage().read("mycart");
     }
     for (var i = 0; i < _cart.length; i++) {
-      init = _cart[i]["price"];
+      init = _cart[i]["product_price"];
 
-      count = _cart[i]["count"];
+      count = _cart[i]["product_qty"];
       double p = double.parse(init);
       total = total + p * count;
     }

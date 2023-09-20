@@ -8,7 +8,6 @@ import 'package:watch_app/core/utils/app_string.dart';
 import 'package:watch_app/presentation/commamn/app_text_field.dart';
 import 'package:watch_app/presentation/dashboard/payment/payment_controller.dart';
 import 'package:watch_app/utills/custom_dialogue.dart';
-import 'package:watch_app/utills/storage.dart';
 import '../../core/utils/constant_sizebox.dart';
 import '../commamn/app_button.dart';
 
@@ -417,7 +416,6 @@ class _AddAddressState extends State<AddAddress> {
                       selectedCountry != null) {
                     _handleAddress();
                   } else {
-                    GetStorage().remove(AppString.address);
                     customDialogue(message: "Please fill all fields to proceed");
                   }
                 },

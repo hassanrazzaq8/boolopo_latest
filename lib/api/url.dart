@@ -6,6 +6,7 @@ const String getBestSellerProductsApi="$mainUrl/productsbypopularity.php";
 const String getRecommendedProductsApi="$mainUrl/productsbyrating.php";
 const String getProductsByIdApi="$mainUrl/productsbycategory.php";
 const String editProfileApi="$mainUrl/editprofile.php";
+const String placeOrderApi="$mainUrl/place_order.php";
 
 //Product Details api different main url
 const String getProductDetailsApi="https://boolopo.co/wp-json/wc/v3/products";
