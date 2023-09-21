@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 // import 'package:get_storage/get_storage.dart';
 import 'package:watch_app/core/utils/app_string.dart';
@@ -10,6 +11,8 @@ import 'package:watch_app/presentation/dashboard/favorite/favorite_screen.dart';
 import 'package:watch_app/presentation/dashboard/home/home_page.dart';
 import 'package:watch_app/presentation/dashboard/profile/profile_screen.dart';
 import 'package:watch_app/presentation/dashboard/shopping_cart/my_cart.dart';
+import 'package:watch_app/providers/cart_provider.dart';
+import 'package:watch_app/providers/favourite_provider.dart';
 import 'package:watch_app/utills/color.dart';
 import 'package:watch_app/utills/storage.dart';
 import 'package:get/get.dart';
@@ -74,10 +77,9 @@ class BottomBarScreenState extends State<BottomBarScreen> {
                       )
                     : appBar(
                         actionPressed: () {
-                          Get.toNamed(AppRoutes.editProfileScreen)?.then((value) {
-                            setState(() {
-
-                            });
+                          Get.toNamed(AppRoutes.editProfileScreen)
+                              ?.then((value) {
+                            setState(() {});
                           });
                         },
                         backgroundColor: AppColors.appColor,
@@ -106,6 +108,8 @@ class BottomBarScreenState extends State<BottomBarScreen> {
   }
 
   bottombar() {
+    final cartProvider = Provider.of<ProviderCart>(context);
+    final favouriteProvider = Provider.of<FavoProvider>(context);
     return Container(
       height: Get.height * 0.12,
       decoration: BoxDecoration(
@@ -138,11 +142,22 @@ class BottomBarScreenState extends State<BottomBarScreen> {
                   ),
                   child: IconButton(
                     onPressed: () => _con.onTap(index),
-                    icon: Image.asset(
-                      _con.icons[index],
-                      color: _con.pageIndex.value == index
-                          ? Colors.white
-                          : Colors.black,
+                    icon: Badge(
+                      label: index == 2
+                          ? Text(
+                              favouriteProvider.favouriteItems.toString(),
+                            )
+                          : Text(
+                        cartProvider.cartItems.toString(),
+                            ),
+                      isLabelVisible: index == 1 || index == 2 ? true : false,
+                      backgroundColor: themeColor,
+                      child: Image.asset(
+                        _con.icons[index],
+                        color: _con.pageIndex.value == index
+                            ? Colors.white
+                            : Colors.black,
+                      ),
                     ),
                   ),
                 ),

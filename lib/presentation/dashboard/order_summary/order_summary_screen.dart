@@ -4,7 +4,7 @@ import 'package:watch_app/core/app_export.dart';
 import 'package:watch_app/core/utils/app_string.dart';
 import 'package:watch_app/presentation/commamn/app_bar.dart';
 import 'package:watch_app/presentation/commamn/app_button.dart';
-import 'package:watch_app/presentation/payment/payment_screen.dart';
+import 'package:watch_app/presentation/webView/app_web_view.dart';
 import 'package:watch_app/utills/custom_dialogue.dart';
 import 'package:watch_app/utills/loader.dart';
 
@@ -47,19 +47,17 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
         width: Get.width / 2,
         text: AppString.payment,
         onPressed: () async {
-          // if (storeAddresses.isEmpty) {
-          //   customDialogue(
-          //       message:
-          //           "Kindly consider to add address regarding place your order");
-          // } else {
-          //   Loader.showLoader();
-          //   await _con.placeOrder(
-          //       cart: cartItems,
-          //       shipperDetails: storeAddresses[_con.isSelectAdd.value]);
-          //   Loader.hideLoader(context);
-          // }
-          // _con.paymentMethodDialogue();
-          Get.to(()=> const WebViewExample());
+          if (storeAddresses.isEmpty) {
+            customDialogue(
+                message:
+                    "Kindly consider to add address regarding place your order");
+          } else {
+            Loader.showLoader();
+            await _con.placeOrder(
+                context: context,
+                cart: cartItems,
+                shipperDetails: storeAddresses[_con.isSelectAdd.value]);
+          }
         },
       ),
       body: SingleChildScrollView(

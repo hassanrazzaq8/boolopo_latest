@@ -16,7 +16,6 @@ class Cart extends StatefulWidget {
 }
 
 class _CartState extends State<Cart> {
-  int counter = 1;
   String totalPrice = "0";
   num price = 0;
   late List test;
@@ -24,8 +23,9 @@ class _CartState extends State<Cart> {
   @override
   void initState() {
     super.initState();
-    if (GetStorage().read("mycart") != null) {
-      test = GetStorage().read("mycart");
+    if (GetStorage().read("myCart") != null) {
+      test = GetStorage().read("myCart");
+      debugPrint("cart list : $test");
     } else {
       test = [];
     }

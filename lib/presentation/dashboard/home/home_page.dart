@@ -549,7 +549,7 @@ class _HomePageState extends State<HomePage> {
                                   },
                                 ),
                               )
-                            : const EmptyProduct()
+                            :  EmptyProduct()
                         : Loader.apiLoading(),
                     // child:const EmptyProduct(),
                   ),

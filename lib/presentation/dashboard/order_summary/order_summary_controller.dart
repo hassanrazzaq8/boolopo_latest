@@ -7,7 +7,9 @@ import 'package:watch_app/api/url.dart';
 import 'package:watch_app/core/app_export.dart';
 import 'package:watch_app/core/utils/app_string.dart';
 import 'package:watch_app/presentation/commamn/app_button.dart';
+import 'package:watch_app/presentation/webView/app_web_view.dart';
 import 'package:watch_app/utills/custom_dialogue.dart';
+import 'package:watch_app/utills/loader.dart';
 
 class OrderSummaryController extends GetxController {
   RxInt isSelectAdd = 0.obs;
@@ -15,6 +17,7 @@ class OrderSummaryController extends GetxController {
   Future<bool> placeOrder({
     required List cart,
     required Map<String, dynamic> shipperDetails,
+    BuildContext? context,
   }) async {
     try {
       int userId = GetStorage().read(AppString.userId);
@@ -34,10 +37,13 @@ class OrderSummaryController extends GetxController {
       jsonEncode(body);
       debugPrint("body is : $body");
       var data = await Api.postMethod(url: placeOrderApi, body: body);
+      Loader.hideLoader(context);
       if (data != null) {
-        paymentMethodDialogue();
+        data["payment_link"] != null
+            ? paymentMethodDialogue(data["payment_link"])
+            : customDialogue(message: AppString.badHappenedError);
       } else {
-        customDialogue(message: AppString.badHappenedError);
+        ;
       }
       debugPrint("data response if I am in luck : $data");
 
@@ -47,7 +53,7 @@ class OrderSummaryController extends GetxController {
     }
   }
 
-  paymentMethodDialogue() {
+  paymentMethodDialogue(String url) {
     return Get.dialog(
       WillPopScope(
         onWillPop: () async {
@@ -70,6 +76,18 @@ class OrderSummaryController extends GetxController {
               ),
               hSizedBox14,
               AppButton(
+                onPressed: () {
+                  Get.back();
+                  Get.to(
+                        () => AppWebView(
+                      url:url,
+                      title: "Payment",
+                      onBackTap: () {
+                        Get.offAllNamed(AppRoutes.orderSummaryScreen);
+                      },
+                    ),
+                  );
+                },
                 width: Get.width / 2,
                 height: Get.height * .06,
                 text: "Payrexx",

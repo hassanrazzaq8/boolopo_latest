@@ -4,196 +4,186 @@ import 'package:watch_app/core/app_export.dart';
 import 'package:watch_app/core/utils/app_string.dart';
 import 'package:watch_app/presentation/commamn/app_bar.dart';
 import 'package:watch_app/utills/color.dart';
+import 'package:watch_app/utills/empty_product.dart';
+import 'package:watch_app/utills/loader.dart';
 
 import 'my_orders_controller.dart';
 
-class MyOrdersScreen extends StatelessWidget {
+class MyOrdersScreen extends StatefulWidget {
   MyOrdersScreen({Key? key}) : super(key: key);
+
+  @override
+  State<MyOrdersScreen> createState() => _MyOrdersScreenState();
+}
+
+class _MyOrdersScreenState extends State<MyOrdersScreen> {
   final MyOrderController _con = Get.put(MyOrderController());
 
   @override
+  void initState() {
+    super.initState();
+    _con.getOrders(context);
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: appBar(
-        text: AppString.myOrders,
-        back: true,
-        actionIcon: true,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 15),
-        child: Column(
-          children: [
-            ListView.builder(
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: 4,
-              shrinkWrap: true,
-              itemBuilder: (context, index) {
-                return myOrdersList(index);
-              },
-            ),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              height: 50,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(10),
-                boxShadow: const [
-                  BoxShadow(
-                    color: Colors.black12,
-                    blurRadius: 10.0,
-                    spreadRadius: .5,
-                  ),
-                ],
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    "Total -",
-                    style: TextStyle(
-                        color: Color(0xff707070),
-                        fontWeight: FontWeight.w500,
-                        fontSize: 15),
-                  ),
-                  Obx(
-                    () => Text("\$${_con.subTotal().toString()}",
-                        style: GoogleFonts.poppins(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 15,
-                          color: Color(0xff707070),
-                          fontStyle: FontStyle.italic,
-                        )),
-                  )
-                ],
-              ),
-            ),
-          ],
+    return Obx(
+      () => WillPopScope(
+        onWillPop: () async{
+          Get.offAllNamed(AppRoutes.bottomBarScreen);
+          return false;
+        },
+        child: Scaffold(
+          appBar: appBar(
+            text: AppString.myOrders,
+            back: true,
+            actionIcon: true,
+            leadingPressed: () {
+              Get.offAllNamed(AppRoutes.bottomBarScreen);
+            },
+          ),
+          body: _con.ordersFetch.value
+              ? _con.getOrdersModel.orderlist!.isNotEmpty
+                  ? ListView.builder(
+                      itemCount: _con.getOrdersModel.orderlist?.length ?? 0,
+                      itemBuilder: (context, index) {
+                        return orderTile(
+                          orderId: _con.getOrdersModel.orderlist?[index].orderId
+                              .toString(),
+                          orderAmount:
+                              _con.getOrdersModel.orderlist?[index].orderAmount,
+                          orderStatus:
+                              _con.getOrdersModel.orderlist?[index].orderStatus,
+                          orderDate:
+                              _con.getOrdersModel.orderlist?[index].orderDate?.split(' ').first,
+                        );
+                      },
+                    )
+                  : EmptyProduct(
+                      text: "No orders Available",
+                    )
+              : Loader.apiLoading(),
         ),
       ),
     );
   }
 
-  myOrdersList(index) {
+  orderTile({
+    String? orderId,
+    String? orderAmount,
+    String? orderStatus,
+    String? orderDate,
+  }) {
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      height: 100,
       width: Get.width,
-      padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
-        boxShadow: const [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 10.0,
-            spreadRadius: .5,
-          ),
-        ],
+          color: Colors.grey[200],
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: themeColor)),
+      margin: EdgeInsets.symmetric(
+        horizontal: Get.width * .05,
+        vertical: Get.height * .015,
       ),
-      child: Row(
+      padding: EdgeInsets.all(Get.width * .05),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Image.asset(
-            _con.myorderList[index].wimage,
-            height: 100,
-            width: 100,
-            fit: BoxFit.cover,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "Order Id: ",
+                style: TextStyle(
+                  fontSize: Get.textScaleFactor * 14,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Text(
+                orderId ?? "",
+                style: TextStyle(
+                  fontSize: Get.textScaleFactor * 14,
+                  fontWeight: FontWeight.w400,
+                  color: Colors.grey.shade800,
+                ),
+              ),
+            ],
           ),
-          wSizedBox8,
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "Order Amount",
+                style: TextStyle(
+                  fontSize: Get.textScaleFactor * 14,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey.shade600,
+                ),
+              ),
+              Text(
+                orderAmount ?? "",
+                style: TextStyle(
+                  fontSize: Get.textScaleFactor * 14,
+                  fontWeight: FontWeight.w400,
+                  color: Colors.grey.shade800,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: Get.height * .02),
+          IntrinsicHeight(
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
-                  _con.myorderList[index].wname,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w500,
-                    fontSize: 14,
-                  ),
-                ),
-                const Spacer(),
-                Row(
+                Column(
                   children: [
-                    Obx(
-                      () => Text(
-                          "\$${_con.myorderList[index].quantity * _con.myorderList[index].price}",
-                          style: GoogleFonts.poppins(
-                            color: themeColor,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                            fontStyle: FontStyle.italic,
-                          )),
+                    Text(
+                      "Order Status",
+                      style: TextStyle(
+                        fontSize: Get.textScaleFactor * 14,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey.shade500,
+                      ),
                     ),
-                    const Spacer(),
-                    Obx(
-                      () => Row(
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              _con.myorderList[index].quantity.value == 1
-                                  ? null
-                                  : _con.myorderList[index].quantity.value >= 1
-                                      ? _con.myorderList[index].quantity.value--
-                                      : null;
-                            },
-                            child: Container(
-                              height: 30,
-                              width: 30,
-                              decoration: const BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Color(0xffFFF2DD),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(10),
-                                child: Image.asset(
-                                  ImageConstant.remove,
-                                ),
-                              ),
-                            ),
-                          ),
-                          Container(
-                            alignment: Alignment.center,
-                            height: 30,
-                            width: 30,
-                            child: Text(
-                                _con.myorderList[index].quantity.value
-                                    .toString()
-                                    .padLeft(2, "0"),
-                                style: const TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500)),
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              _con.myorderList[index].quantity.value < 15
-                                  ? _con.myorderList[index].quantity.value++
-                                  : null;
-                            },
-                            child: Container(
-                              height: 30,
-                              width: 30,
-                              decoration: const BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Color(0xffFFF2DD),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(10),
-                                child: Image.asset(ImageConstant.add),
-                              ),
-                            ),
-                          ),
-                        ],
+                    Text(
+                      orderStatus ?? "",
+                      style: TextStyle(
+                        fontSize: Get.textScaleFactor * 14,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey.shade600,
+                      ),
+                    ),
+                  ],
+                ),
+                wSizedBox8,
+                Container(
+                  width: 2,
+                  color: Colors.grey.shade400,
+                ),
+                wSizedBox8,
+                Column(
+                  children: [
+                    Text(
+                      "Created At",
+                      style: TextStyle(
+                        fontSize: Get.textScaleFactor * 14,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey.shade500,
+                      ),
+                    ),
+                    Text(
+                      orderDate ?? "2023-11-10",
+                      style: TextStyle(
+                        fontSize: Get.textScaleFactor * 14,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey.shade800,
                       ),
                     ),
                   ],
                 ),
               ],
             ),
-          ),
-          wSizedBox12
+          )
         ],
       ),
     );

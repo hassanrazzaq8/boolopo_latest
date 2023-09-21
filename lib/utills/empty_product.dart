@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:watch_app/utills/color.dart';
 
 class EmptyProduct extends StatelessWidget {
-  const EmptyProduct({Key? key}) : super(key: key);
+   EmptyProduct({Key? key,this.text}) : super(key: key);
+  String? text;
 
 
 
@@ -10,7 +11,7 @@ class EmptyProduct extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Text(
-        "No Product Available",
+       text?? "No Product Available",
         style: TextStyle(
           fontSize: 18,
           fontWeight: FontWeight.w600,

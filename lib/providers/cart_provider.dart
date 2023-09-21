@@ -3,12 +3,13 @@ import 'package:get_storage/get_storage.dart';
 
 class ProviderCart extends ChangeNotifier {
   List _cart = [];
+
   List get cart => _cart;
 
   void addToCart(
-      String id, String title, String price, double quantity, String image) {
-    if (GetStorage().read("mycart") != null) {
-      _cart = GetStorage().read("mycart");
+      String id, String title, String price, int quantity, String image) {
+    if (GetStorage().read("myCart") != null) {
+      _cart = GetStorage().read("myCart");
     }
     final exists = _cart.where((value) => (value["id"] == id));
     if (exists.isEmpty) {
@@ -21,7 +22,7 @@ class ProviderCart extends ChangeNotifier {
           "image": image,
         },
       );
-      GetStorage().write("mycart", _cart);
+      GetStorage().write("myCart", _cart);
     } else {
       return;
     }
@@ -29,36 +30,38 @@ class ProviderCart extends ChangeNotifier {
   }
 
   void removeFromCart(String id) {
-    List local = GetStorage().read("mycart");
+    List local = GetStorage().read("myCart");
     final exists = local.where((value) => (value["id"] == id));
     if (exists.isNotEmpty) {
       local.removeWhere((value) => (value["id"] == id));
       print(id);
-      GetStorage().write("mycart", local);
+      GetStorage().write("myCart", local);
     }
     notifyListeners();
   }
 
-  double totalPrice() {
-    double total = 0.0;
+  int totalPrice() {
+    int total=0;
     String init;
-    double count;
-    if (GetStorage().read("mycart") != null) {
-      _cart = GetStorage().read("mycart");
-    }
-    for (var i = 0; i < _cart.length; i++) {
-      init = _cart[i]["product_price"];
+    int count;
+    if (GetStorage().read("myCart") != null) {
+      _cart = GetStorage().read("myCart");
 
-      count = _cart[i]["product_qty"];
-      double p = double.parse(init);
-      total = total + p * count;
+      for (var i = 0; i < _cart.length; i++) {
+        init = _cart[i]["product_price"];
+
+        count = _cart[i]["product_qty"];
+        var p = int.parse(init);
+        debugPrint("p is : $p");
+        total = total + p * count;
+      }
     }
     return total;
   }
 
   bool isAdded(int id) {
-    if (GetStorage().read("mycart") != null) {
-      _cart = GetStorage().read("mycart");
+    if (GetStorage().read("myCart") != null) {
+      _cart = GetStorage().read("myCart");
     }
     var exist = _cart.where((value) => (value["id"] == id));
     if (exist.isNotEmpty) {
@@ -67,10 +70,14 @@ class ProviderCart extends ChangeNotifier {
       return false;
     }
   }
-
+  int get cartItems {
+    _cart = GetStorage().read("myCart") ?? [];
+    // notifyListeners();
+    return _cart.length;
+  }
   void clearAll() {
     _cart.clear();
-    GetStorage().remove("mycart");
+    GetStorage().remove("myCart");
     notifyListeners();
   }
 }

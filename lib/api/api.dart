@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:watch_app/core/utils/app_string.dart';
 import 'package:watch_app/utills/custom_dialogue.dart';
@@ -48,14 +49,21 @@ class Api {
     try {
       http.Response response = await http.post(
         Uri.parse(url),
-        body: jsonEncode(body),
+        body: body,
       );
       print(response.body);
       if (response.statusCode == 200) {
         var data = jsonDecode(
           response.body.toString(),
         );
-       return data;
+        debugPrint("data after into json : $data");
+        if (data["status"] == "success") {
+          return data;
+        } else {
+          customDialogue(message: data["status"]);
+          return null;
+        }
+
       } else {
         customDialogue(message: AppString.badHappenedError);
         return null;
