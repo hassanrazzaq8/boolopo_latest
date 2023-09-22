@@ -7,6 +7,7 @@ import 'package:watch_app/core/app_export.dart';
 import 'package:watch_app/presentation/commamn/app_button.dart';
 import 'package:watch_app/providers/cart_provider.dart';
 import 'package:watch_app/utills/color.dart';
+import 'package:watch_app/utills/storage.dart';
 
 class Cart extends StatefulWidget {
   const Cart({Key? key}) : super(key: key);
@@ -36,136 +37,155 @@ class _CartState extends State<Cart> {
     final provider = Provider.of<ProviderCart>(context);
 
     return Scaffold(
-      body: test.isEmpty
-          // ? Column(
-          //     crossAxisAlignment: CrossAxisAlignment.center,
-          //     children: [
-          //       // Image.asset(ImageConstant.emptycart),
-          //
-          //     ],
-          //   )
-          ? const Center(child: Text("Your cart is empty"))
-          : Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 18.0),
-              child: ListView.builder(
-                itemCount: test.length,
-                itemBuilder: (context, index) {
-                  String price = test[index]["product_price"];
-                  double p = double.parse(price);
-                  return Container(
-                    margin: EdgeInsets.symmetric(vertical: Get.height * .02),
-                    decoration: BoxDecoration(
-                        color: Colors.grey[100],
-                        borderRadius: BorderRadius.circular(10)),
-                    padding: EdgeInsets.all(Get.height * .01),
-                    child: IntrinsicHeight(
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(
-                            height: Get.height * .15,
-                            width: Get.width * .25,
-                            child: Image.network(
-                              test[index]["image"].toString(),
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                          wSizedBox6,
-                          SizedBox(
-                            width: Get.width * .45,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  test[index]["product_name"],
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                FittedBox(
-                                  child: Row(
-                                    // mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      Text(
-                                        " \$${p * test[index]["product_qty"]}    ",
-                                        style: TextStyle(
-                                          color: themeColor,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: Get.height * .025,
-                                        ),
-                                      ),
-                                      IconButton(
-                                        onPressed: () {
-                                          setState(
-                                            () {
-                                              test[index]["product_qty"] == 1
-                                                  ? null
-                                                  : test[index]["product_qty"] >= 1
-                                                      ? test[index]["product_qty"]--
-                                                      : null;
-                                            },
-                                          );
-                                        },
-                                        icon: Icon(
-                                          Icons.remove_circle,
-                                          size: Get.height * .05,
-                                        ),
-                                      ),
-                                      Text(
-                                        test[index]["product_qty"].toString(),
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: Get.height * .025,
-                                        ),
-                                      ),
-                                      IconButton(
-                                        onPressed: () {
-                                          setState(() {
-                                            test[index]["product_qty"]++;
-                                          });
-                                        },
-                                        icon: Icon(
-                                          Icons.add_circle,
-                                          size: Get.height * .05,
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                        width: 5.0,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Spacer(),
-                          Align(
-                            child: IconButton(
-                                onPressed: () {
-                                  debugPrint("id is : ${test[index]["product_id"]}");
-                                  provider.removeFromCart(test[index]["product_id"]);
-                                },
-                                icon: const Icon(Icons.delete_forever)),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                  return Card(
-                    margin: const EdgeInsets.symmetric(vertical: 8),
-                    child: ListTile(
-                      leading: SizedBox(
-                        height: 100,
-                        width: 100,
-                        child: Image.network(
-                          test[index]["image"].toString(),
-                        ),
-                      ),
-                      title: Text(test[index]["name"]),
-                    ),
-                  );
+      body: !Storage.isUserLogin
+          ? Center(
+              child: AppButton(
+                text: "Login",
+                width: Get.width / 3,
+                onPressed: () {
+                  Get.offAllNamed(AppRoutes.loginScreen);
                 },
               ),
-            ),
+            )
+          : test.isEmpty
+              // ? Column(
+              //     crossAxisAlignment: CrossAxisAlignment.center,
+              //     children: [
+              //       // Image.asset(ImageConstant.emptycart),
+              //
+              //     ],
+              //   )
+              ? const Center(child: Text("Your cart is empty"))
+              : Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 18.0),
+                  child: ListView.builder(
+                    itemCount: test.length,
+                    itemBuilder: (context, index) {
+                      String price = test[index]["product_price"];
+                      double p = double.parse(price);
+                      return Container(
+                        margin:
+                            EdgeInsets.symmetric(vertical: Get.height * .02),
+                        decoration: BoxDecoration(
+                            color: Colors.grey[100],
+                            borderRadius: BorderRadius.circular(10)),
+                        padding: EdgeInsets.all(Get.height * .01),
+                        child: IntrinsicHeight(
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(
+                                height: Get.height * .15,
+                                width: Get.width * .25,
+                                child: Image.network(
+                                  test[index]["image"].toString(),
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                              wSizedBox6,
+                              SizedBox(
+                                width: Get.width * .45,
+                                child: Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      test[index]["product_name"],
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    FittedBox(
+                                      child: Row(
+                                        // mainAxisAlignment: MainAxisAlignment.end,
+                                        children: [
+                                          Text(
+                                            " \$${p * test[index]["product_qty"]}    ",
+                                            style: TextStyle(
+                                              color: themeColor,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: Get.height * .025,
+                                            ),
+                                          ),
+                                          IconButton(
+                                            onPressed: () {
+                                              setState(
+                                                () {
+                                                  test[index]["product_qty"] ==
+                                                          1
+                                                      ? null
+                                                      : test[index][
+                                                                  "product_qty"] >=
+                                                              1
+                                                          ? test[index]
+                                                              ["product_qty"]--
+                                                          : null;
+                                                },
+                                              );
+                                            },
+                                            icon: Icon(
+                                              Icons.remove_circle,
+                                              size: Get.height * .05,
+                                            ),
+                                          ),
+                                          Text(
+                                            test[index]["product_qty"]
+                                                .toString(),
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: Get.height * .025,
+                                            ),
+                                          ),
+                                          IconButton(
+                                            onPressed: () {
+                                              setState(() {
+                                                test[index]["product_qty"]++;
+                                              });
+                                            },
+                                            icon: Icon(
+                                              Icons.add_circle,
+                                              size: Get.height * .05,
+                                            ),
+                                          ),
+                                          const SizedBox(
+                                            width: 5.0,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Spacer(),
+                              Align(
+                                child: IconButton(
+                                    onPressed: () {
+                                      debugPrint(
+                                          "id is : ${test[index]["product_id"]}");
+                                      provider.removeFromCart(
+                                          test[index]["product_id"]);
+                                    },
+                                    icon: const Icon(Icons.delete_forever)),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                      return Card(
+                        margin: const EdgeInsets.symmetric(vertical: 8),
+                        child: ListTile(
+                          leading: SizedBox(
+                            height: 100,
+                            width: 100,
+                            child: Image.network(
+                              test[index]["image"].toString(),
+                            ),
+                          ),
+                          title: Text(test[index]["name"]),
+                        ),
+                      );
+                    },
+                  ),
+                ),
       bottomNavigationBar: test.isEmpty
           ? const SizedBox.shrink()
           : Padding(
@@ -188,13 +208,12 @@ class _CartState extends State<Cart> {
                       ],
                     ),
                   ),
-
                   AppButton(
                     text: "Proceed",
                     width: Get.width / 1.3,
                     color: themeColor,
                     onPressed: () {
-                     Get.toNamed(AppRoutes.orderSummaryScreen);
+                      Get.toNamed(AppRoutes.orderSummaryScreen);
                     },
                   ),
                   hSizedBox6,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:watch_app/core/app_export.dart';
+import 'package:watch_app/utills/storage.dart';
 
 AppBar appBar({
   Function()? actionPressed,
@@ -74,7 +75,9 @@ AppBar appBar({
             ),
             onPressed: actionPressed ??
                 () {
-                  Get.toNamed(AppRoutes.notificationScreen);
+                  Storage.isUserLogin
+                      ? Get.toNamed(AppRoutes.notificationScreen)
+                      : () {};
                 },
           ),
         wSizedBox14,

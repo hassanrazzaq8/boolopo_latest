@@ -1,3 +1,5 @@
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -37,6 +39,7 @@ class _ProductDetailState extends State<ProductDetail> {
   TextEditingController sizeController = TextEditingController();
   final int count = 1;
   String? review;
+  int currentIndex=0;
 
   @override
   void initState() {
@@ -105,12 +108,18 @@ class _ProductDetailState extends State<ProductDetail> {
                   children: [
                     IconButton(
                       onPressed: () {
-                        favouriteProvider.favorite(
-                          productDetailsModel.name!,
-                          productDetailsModel.price!,
-                          productDetailsModel.images?.first.src ?? "",
-                          productDetailsModel.id.toString(),
-                        );
+                        if (Storage.isUserLogin) {
+                          favouriteProvider.favorite(
+                            productDetailsModel.name!,
+                            productDetailsModel.price!,
+                            productDetailsModel.images?.first.src ?? "",
+                            productDetailsModel.id.toString(),
+                          );
+                        } else {
+                          customDialogue(
+                              message:
+                                  "Please login to add products to favourite");
+                        }
                       },
                       icon: favouriteProvider
                               .isFavourite(productDetailsModel.name!)
@@ -125,7 +134,7 @@ class _ProductDetailState extends State<ProductDetail> {
                     ),
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.black,
+                          backgroundColor: themeColor,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(
                               20,
@@ -134,7 +143,7 @@ class _ProductDetailState extends State<ProductDetail> {
                           minimumSize: const Size(150, 50)),
                       onPressed: () {
                         if (Storage.isUserLogin) {
-                          if(selectedSize!=null){
+                          if (selectedSize != null) {
                             cartProvider.addToCart(
                               widget.id,
                               productDetailsModel.name ?? "",
@@ -144,15 +153,21 @@ class _ProductDetailState extends State<ProductDetail> {
                             );
                             showSnackBar("Product added to your cart", context);
                             Navigator.pop(context);
-                          }else{
-                            customDialogue(message: "Please select size of your product to continue");
+                          } else {
+                            customDialogue(
+                                message:
+                                    "Please select size of your product to continue");
                           }
-
                         } else {
-                          Get.offAllNamed(AppRoutes.loginScreen);
+                          customDialogue(
+                            message: "Please login to add products to cart",
+                          );
                         }
                       },
-                      child: const Text("Add To Cart"),
+                      child: const Text(
+                        "Add To Cart",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
                     ),
                     IconButton(
                       onPressed: () {},
@@ -194,26 +209,60 @@ class _ProductDetailState extends State<ProductDetail> {
                             SizedBox(
                               height: MediaQuery.of(context).size.height * .38,
                               width: double.infinity,
-                              child: Image.network(
-                                productDetailsModel.images?.first.src ?? "",
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) {
-                                  return Icon(
-                                    Icons.image_not_supported_rounded,
-                                    size: Get.height * .3,
-                                    color: Colors.black26,
-                                  );
-                                },
-                                loadingBuilder:
-                                    (context, child, loadingProgress) {
-                                  if (loadingProgress != null) {
-                                    return const Center(
-                                      child: CupertinoActivityIndicator(),
+                               child: CarouselSlider(
+                                 options: CarouselOptions(
+                                   // height:
+                                   viewportFraction: 1,
+                                   onPageChanged:
+                                       (index, reason) {
+                                     setState(() {
+                                       currentIndex=index;
+                                     });
+                                   },
+
+                                 ),
+                                  items: productDetailsModel.images?.map((i) {
+                                    return Builder(
+                                      builder: (BuildContext context) {
+                                        return Container(
+                                            width: MediaQuery.of(context).size.width,
+                                            margin: const EdgeInsets.symmetric(horizontal: 10.0),
+
+                                            child:
+                                            Image.network(
+                                              i.src ?? "",
+                                              fit: BoxFit.cover,
+                                              errorBuilder: (context, error, stackTrace) {
+                                                return Icon(
+                                                  Icons.image_not_supported_rounded,
+                                                  size: Get.height * .3,
+                                                  color: Colors.black26,
+                                                );
+                                              },
+                                              loadingBuilder:
+                                                  (context, child, loadingProgress) {
+                                                if (loadingProgress != null) {
+                                                  return const Center(
+                                                    child: CupertinoActivityIndicator(),
+                                                  );
+                                                } else {
+                                                  return child;
+                                                }
+                                              },
+                                            ),
+                                            // Text('text $i', style: const TextStyle(fontSize: 16.0),)
+                                        );
+                                      },
                                     );
-                                  } else {
-                                    return child;
-                                  }
-                                },
+                                  }).toList(),
+                                ),
+                            ),
+                            DotsIndicator(
+                              dotsCount: productDetailsModel.images?.length??0,
+                              position: currentIndex,
+                              decorator: DotsDecorator(
+                                activeColor: themeColor,
+
                               ),
                             ),
                             const SizedBox(
@@ -256,149 +305,158 @@ class _ProductDetailState extends State<ProductDetail> {
                           ),
                           InkWell(
                             onTap: () {
-                              showModalBottomSheet(
-                                  enableDrag: true,
-                                  isScrollControlled: true,
-                                  backgroundColor: Colors.transparent,
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return Container(
-                                      width: Get.width,
-                                      padding: EdgeInsets.only(
-                                          bottom: MediaQuery.of(context)
-                                              .viewInsets
-                                              .bottom),
-                                      decoration: BoxDecoration(
-                                          color: Colors.grey.shade100,
-                                          borderRadius: const BorderRadius.only(
-                                              topRight: Radius.circular(20),
-                                              topLeft: Radius.circular(20))),
-                                      child: SingleChildScrollView(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            const SizedBox(
-                                              height: 10,
-                                            ),
-                                            Container(
-                                              height: 4,
-                                              width: Get.width * 0.22,
-                                              color: Colors.grey,
-                                            ),
-                                            const SizedBox(
-                                              height: 10,
-                                            ),
-                                            Text(
-                                              "What is Your Rate",
-                                              style: TextStyle(
-                                                  color: Colors.grey.shade700,
-                                                  fontWeight: FontWeight.w600,
-                                                  fontSize: 17),
-                                            ),
-                                            const SizedBox(
-                                              height: 10,
-                                            ),
-                                            RatingBar.builder(
-                                              initialRating:
-                                                  double.parse(rating ?? "2.0"),
-                                              minRating: 1,
-                                              direction: Axis.horizontal,
-                                              allowHalfRating: true,
-                                              itemCount: 5,
-                                              itemPadding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 4.0),
-                                              itemBuilder: (context, _) =>
-                                                  const Icon(
-                                                Icons.star,
-                                                color: Colors.amber,
+                              if (Storage.isUserLogin) {
+                                showModalBottomSheet(
+                                    enableDrag: true,
+                                    isScrollControlled: true,
+                                    backgroundColor: Colors.transparent,
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return Container(
+                                        width: Get.width,
+                                        padding: EdgeInsets.only(
+                                            bottom: MediaQuery.of(context)
+                                                .viewInsets
+                                                .bottom),
+                                        decoration: BoxDecoration(
+                                            color: Colors.grey.shade100,
+                                            borderRadius:
+                                                const BorderRadius.only(
+                                                    topRight:
+                                                        Radius.circular(20),
+                                                    topLeft:
+                                                        Radius.circular(20))),
+                                        child: SingleChildScrollView(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              const SizedBox(
+                                                height: 10,
                                               ),
-                                              onRatingUpdate: (value) {
-                                                setState(() {
-                                                  rating = value.toString();
-                                                });
-                                                print("rating : $rating");
-                                              },
-                                            ),
-                                            const SizedBox(
-                                              height: 15,
-                                            ),
-                                            Text(
-                                              "Please Share your Opinion",
-                                              style: TextStyle(
-                                                  color: Colors.grey.shade700,
-                                                  fontWeight: FontWeight.w600,
-                                                  fontSize: 22),
-                                            ),
-                                            Text(
-                                              "About the Product",
-                                              style: TextStyle(
-                                                  color: Colors.grey.shade700,
-                                                  fontWeight: FontWeight.w600,
-                                                  fontSize: 22),
-                                            ),
-                                            const SizedBox(
-                                              height: 10,
-                                            ),
-                                            Container(
-                                              height: Get.height * 0.2,
-                                              width: Get.width * 0.85,
-                                              color: Colors.white,
-                                              child: TextFormField(
-                                                onChanged: (value) {
-                                                  setState(() {
-                                                    comment = value;
-                                                  });
-                                                },
-                                                decoration:
-                                                    const InputDecoration(
-                                                  border: InputBorder.none,
-                                                  hintText: 'Your review',
+                                              Container(
+                                                height: 4,
+                                                width: Get.width * 0.22,
+                                                color: Colors.grey,
+                                              ),
+                                              const SizedBox(
+                                                height: 10,
+                                              ),
+                                              Text(
+                                                "What is Your Rate",
+                                                style: TextStyle(
+                                                    color: Colors.grey.shade700,
+                                                    fontWeight: FontWeight.w600,
+                                                    fontSize: 17),
+                                              ),
+                                              const SizedBox(
+                                                height: 10,
+                                              ),
+                                              RatingBar.builder(
+                                                initialRating: double.parse(
+                                                    rating ?? "2.0"),
+                                                minRating: 1,
+                                                direction: Axis.horizontal,
+                                                allowHalfRating: true,
+                                                itemCount: 5,
+                                                itemPadding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 4.0),
+                                                itemBuilder: (context, _) =>
+                                                    const Icon(
+                                                  Icons.star,
+                                                  color: Colors.amber,
                                                 ),
+                                                onRatingUpdate: (value) {
+                                                  setState(() {
+                                                    rating = value.toString();
+                                                  });
+                                                  print("rating : $rating");
+                                                },
                                               ),
-                                            ),
-                                            const SizedBox(
-                                              height: 20,
-                                            ),
-                                            GestureDetector(
-                                              onTap: () {
-                                                Get.back();
-                                                addRating();
-                                              },
-                                              child: Container(
-                                                height: 42,
-                                                width: Get.width * 0.5,
-                                                decoration: BoxDecoration(
-                                                    color: themeColor,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            30)),
-                                                child: const Center(
-                                                  child: Text(
-                                                    "Send Reviews",
-                                                    style: TextStyle(
-                                                        color: Colors.white,
-                                                        fontSize: 17,
-                                                        fontWeight:
-                                                            FontWeight.w600),
+                                              const SizedBox(
+                                                height: 15,
+                                              ),
+                                              Text(
+                                                "Please Share your Opinion",
+                                                style: TextStyle(
+                                                    color: Colors.grey.shade700,
+                                                    fontWeight: FontWeight.w600,
+                                                    fontSize: 22),
+                                              ),
+                                              Text(
+                                                "About the Product",
+                                                style: TextStyle(
+                                                    color: Colors.grey.shade700,
+                                                    fontWeight: FontWeight.w600,
+                                                    fontSize: 22),
+                                              ),
+                                              const SizedBox(
+                                                height: 10,
+                                              ),
+                                              Container(
+                                                height: Get.height * 0.2,
+                                                width: Get.width * 0.85,
+                                                color: Colors.white,
+                                                child: TextFormField(
+                                                  onChanged: (value) {
+                                                    setState(() {
+                                                      comment = value;
+                                                    });
+                                                  },
+                                                  decoration:
+                                                      const InputDecoration(
+                                                    border: InputBorder.none,
+                                                    hintText: 'Your review',
                                                   ),
                                                 ),
                                               ),
-                                            )
-                                          ],
+                                              const SizedBox(
+                                                height: 20,
+                                              ),
+                                              GestureDetector(
+                                                onTap: () {
+                                                  Get.back();
+                                                  addRating();
+                                                },
+                                                child: Container(
+                                                  height: 42,
+                                                  width: Get.width * 0.5,
+                                                  decoration: BoxDecoration(
+                                                      color: themeColor,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              30)),
+                                                  child: const Center(
+                                                    child: Text(
+                                                      "Send Reviews",
+                                                      style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontSize: 17,
+                                                          fontWeight:
+                                                              FontWeight.w600),
+                                                    ),
+                                                  ),
+                                                ),
+                                              )
+                                            ],
+                                          ),
                                         ),
-                                      ),
-                                    );
-                                  });
+                                      );
+                                    });
+                              } else {
+                                customDialogue(
+                                    message:
+                                        "Please Login to give rating about product");
+                              }
                             },
                             child: Container(
                               height: 50,
                               width: Get.width * 0.3,
-                              decoration: const BoxDecoration(
-                                  color: Colors.black,
-                                  borderRadius: BorderRadius.only(
+                              decoration: BoxDecoration(
+                                  color: themeColor,
+                                  borderRadius: const BorderRadius.only(
                                       topLeft: Radius.circular(30),
                                       bottomLeft: Radius.circular(30))),
                               child: Center(

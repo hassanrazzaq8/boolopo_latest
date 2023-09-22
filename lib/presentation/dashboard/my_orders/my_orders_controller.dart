@@ -8,31 +8,40 @@ import 'package:watch_app/models/order_model.dart';
 import 'package:watch_app/utills/custom_dialogue.dart';
 
 class MyOrderController extends GetxController {
-  GetOrdersModel getOrdersModel=GetOrdersModel();
-RxBool ordersFetch=false.obs;
-  Future<void> getOrders(context) async {
+  GetOrdersModel getOrdersModel = GetOrdersModel();
+  RxBool ordersFetch = false.obs;
+
+  Future<void> getOrders(context, {required String status}) async {
     try {
-      int userId=GetStorage().read(AppString.userId);
-      Map<String, dynamic> params={
-        "userid":userId.toString(),
-        "ordertype":"all",
+      int userId = GetStorage().read(AppString.userId);
+      Map<String, dynamic> params = {
+        "userid": userId.toString(),
+        "ordertype": status,
       };
-      ordersFetch.value=false;
-      var data = await Api.getMethod(context, url: getOrdersApi,parameters: params);
-      getOrdersModel = GetOrdersModel.fromJson(data);
-      if (getOrdersModel.orderlist == null) {
-        customDialogue(
-          message:
-          "Something went wrong Please Check the internet connection or restart the application",
-        );
+      debugPrint("params : $params");
+      ordersFetch.value = false;
+      var data =
+          await Api.getMethod(context, url: getOrdersApi, parameters: params);
+      if(data!=null){
+        getOrdersModel = GetOrdersModel.fromJson(data);
+        debugPrint("order list : ${getOrdersModel.orderlist}");
+        if (getOrdersModel.orderlist == null) {
+          customDialogue(
+            message:
+            "Something went wrong Please Check the internet connection or restart the application",
+          );
+        } else {
+          debugPrint(
+              "Orders fetched with length : ${getOrdersModel.orderlist?.length}");
+        }
       }else{
-debugPrint("Orders fetched with length : ${getOrdersModel.orderlist?.length}");
+        getOrdersModel.orderlist=[];
       }
-      ordersFetch.value=true;
+
+      ordersFetch.value = true;
     } catch (err) {
-      debugPrint("error while fetching brands : $err");
-      ordersFetch.value=true;
+      debugPrint("error while fetching orders : $err");
+      ordersFetch.value = true;
     }
   }
-
 }

@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 // import 'package:get_storage/get_storage.dart';
 import 'package:watch_app/core/utils/app_string.dart';
 import 'package:watch_app/presentation/auth/login/login_screen.dart';
+import 'package:watch_app/presentation/commamn/app_button.dart';
 import 'package:watch_app/presentation/dashboard/favorite/favorite_screen.dart';
 import 'package:watch_app/presentation/dashboard/home/home_page.dart';
 import 'package:watch_app/presentation/dashboard/profile/profile_screen.dart';
@@ -74,13 +75,16 @@ class BottomBarScreenState extends State<BottomBarScreen> {
                         leadingPressed: () {
                           _con.openDrawer();
                         },
+
                       )
                     : appBar(
                         actionPressed: () {
-                          Get.toNamed(AppRoutes.editProfileScreen)
-                              ?.then((value) {
-                            setState(() {});
-                          });
+                          Storage.isUserLogin
+                              ? Get.toNamed(AppRoutes.editProfileScreen)
+                                  ?.then((value) {
+                                  setState(() {});
+                                })
+                              : () {};
                         },
                         backgroundColor: AppColors.appColor,
                         action: ImageConstant.editprofile,
@@ -100,7 +104,15 @@ class BottomBarScreenState extends State<BottomBarScreen> {
                     : _con.pageIndex.value == 3
                         ? Storage.isUserLogin
                             ? ProfileScreen()
-                            : const LoginScreen()
+                            : Center(
+                                child: AppButton(
+                                  text: "Login",
+                                  width: Get.width / 3,
+                                  onPressed: () {
+                                    Get.offAllNamed(AppRoutes.loginScreen);
+                                  },
+                                ),
+                              )
                         : const HomePage(),
         bottomNavigationBar: bottombar(),
       ),
@@ -148,7 +160,7 @@ class BottomBarScreenState extends State<BottomBarScreen> {
                               favouriteProvider.favouriteItems.toString(),
                             )
                           : Text(
-                        cartProvider.cartItems.toString(),
+                              cartProvider.cartItems.toString(),
                             ),
                       isLabelVisible: index == 1 || index == 2 ? true : false,
                       backgroundColor: themeColor,
@@ -274,7 +286,7 @@ class BottomBarScreenState extends State<BottomBarScreen> {
                                     : null;
                       },
                       child: index == 1
-                          ? Column(
+                          ?_con.pageIndex.value==0? Column(
                               children: [
                                 Container(
                                   padding:
@@ -386,7 +398,7 @@ class BottomBarScreenState extends State<BottomBarScreen> {
                                       )
                                     : const SizedBox.shrink(),
                               ],
-                            )
+                            ):const SizedBox.shrink()
                           : Container(
                               padding: const EdgeInsets.symmetric(vertical: 15),
                               width: Get.width,

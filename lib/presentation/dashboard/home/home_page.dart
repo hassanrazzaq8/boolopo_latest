@@ -10,8 +10,10 @@ import 'package:watch_app/presentation/dashboard/productDetails/product_detail.d
 import 'package:watch_app/providers/favourite_provider.dart';
 import 'package:watch_app/utills/brand_button.dart';
 import 'package:watch_app/utills/color.dart';
+import 'package:watch_app/utills/custom_dialogue.dart';
 import 'package:watch_app/utills/empty_product.dart';
 import 'package:watch_app/utills/loader.dart';
+import 'package:watch_app/utills/storage.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -509,22 +511,29 @@ class _HomePageState extends State<HomePage> {
                                                             .title ??
                                                         ""),
                                             onIconTap: () {
-                                              favouriteProvider.favorite(
-                                                _bottomBarController
-                                                        .products[index]
-                                                        .title ??
-                                                    "",
-                                                _bottomBarController
-                                                    .products[index].price
-                                                    .toString(),
-                                                _bottomBarController
-                                                        .products[index]
-                                                        .productImg ??
-                                                    "",
-                                                _bottomBarController
-                                                    .products[index].productId
-                                                    .toString(),
-                                              );
+                                              if (Storage.isUserLogin) {
+                                                favouriteProvider.favorite(
+                                                  _bottomBarController
+                                                          .products[index]
+                                                          .title ??
+                                                      "",
+                                                  _bottomBarController
+                                                      .products[index].price
+                                                      .toString(),
+                                                  _bottomBarController
+                                                          .products[index]
+                                                          .productImg ??
+                                                      "",
+                                                  _bottomBarController
+                                                      .products[index].productId
+                                                      .toString(),
+                                                );
+                                              } else {
+                                                customDialogue(
+                                                  message:
+                                                      "Please login to add products to favourite",
+                                                );
+                                              }
                                             },
                                             onProductTap: () {
                                               debugPrint(
@@ -549,7 +558,7 @@ class _HomePageState extends State<HomePage> {
                                   },
                                 ),
                               )
-                            :  EmptyProduct()
+                            : EmptyProduct()
                         : Loader.apiLoading(),
                     // child:const EmptyProduct(),
                   ),

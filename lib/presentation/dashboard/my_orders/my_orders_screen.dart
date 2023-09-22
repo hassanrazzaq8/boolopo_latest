@@ -22,47 +22,129 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> {
   @override
   void initState() {
     super.initState();
-    _con.getOrders(context);
+    _con.getOrders(context, status: "all");
   }
 
   @override
   Widget build(BuildContext context) {
     return Obx(
       () => WillPopScope(
-        onWillPop: () async{
+        onWillPop: () async {
           Get.offAllNamed(AppRoutes.bottomBarScreen);
           return false;
         },
         child: Scaffold(
-          appBar: appBar(
-            text: AppString.myOrders,
-            back: true,
-            actionIcon: true,
-            leadingPressed: () {
-              Get.offAllNamed(AppRoutes.bottomBarScreen);
-            },
-          ),
-          body: _con.ordersFetch.value
-              ? _con.getOrdersModel.orderlist!.isNotEmpty
-                  ? ListView.builder(
-                      itemCount: _con.getOrdersModel.orderlist?.length ?? 0,
-                      itemBuilder: (context, index) {
-                        return orderTile(
-                          orderId: _con.getOrdersModel.orderlist?[index].orderId
-                              .toString(),
-                          orderAmount:
-                              _con.getOrdersModel.orderlist?[index].orderAmount,
-                          orderStatus:
-                              _con.getOrdersModel.orderlist?[index].orderStatus,
-                          orderDate:
-                              _con.getOrdersModel.orderlist?[index].orderDate?.split(' ').first,
-                        );
+            appBar: appBar(
+              text: AppString.myOrders,
+              back: true,
+              actionIcon: true,
+              leadingPressed: () {
+                Get.offAllNamed(AppRoutes.bottomBarScreen);
+              },
+            ),
+            body: Column(
+              children: [
+                Row(
+                  children: [
+                    orderStatusTile(
+                      "all",
+                      onTap: () {
+                        setState(() {
+                          selectedId = 0;
+                        });
                       },
-                    )
-                  : EmptyProduct(
-                      text: "No orders Available",
-                    )
-              : Loader.apiLoading(),
+                      selected: selectedId == 0,
+                    ),
+                    orderStatusTile(
+                      "pending",
+                      onTap: () {
+                        setState(() {
+                          selectedId = 1;
+                        });
+                      },
+                      selected: selectedId == 1,
+                    ),
+                    orderStatusTile(
+                      "completed",
+                      onTap: () {
+                        setState(() {
+                          selectedId = 2;
+                        });
+                      },
+                      selected: selectedId == 2,
+                    ),
+                  ],
+                ),
+                Expanded(
+                  child: _con.ordersFetch.value
+                      ? _con.getOrdersModel.orderlist!.isNotEmpty
+                          ? ListView.builder(
+                              shrinkWrap: true,
+                              itemCount:
+                                  _con.getOrdersModel.orderlist?.length ?? 0,
+                              itemBuilder: (context, index) {
+                                return orderTile(
+                                  orderId: _con
+                                      .getOrdersModel.orderlist?[index].orderId
+                                      .toString(),
+                                  orderAmount: _con.getOrdersModel
+                                      .orderlist?[index].orderAmount,
+                                  orderStatus: _con.getOrdersModel
+                                      .orderlist?[index].orderStatus,
+                                  orderDate: _con.getOrdersModel
+                                      .orderlist?[index].orderDate
+                                      ?.split(' ')
+                                      .first,
+                                );
+                              },
+                            )
+                          : EmptyProduct(
+                              text: "No orders Available",
+                            )
+                      : Loader.apiLoading(),
+                ),
+              ],
+            )),
+      ),
+    );
+  }
+
+  int selectedId = 0;
+
+  Widget orderStatusTile(
+    String status, {
+    required Function() onTap,
+    bool? selected,
+  }) {
+    return GestureDetector(
+      onTap: () {
+        onTap();
+        _con.getOrders(context, status: status);
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: selected == true ? themeColor : Colors.grey[200],
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: selected == true
+              ? []
+              : const [
+                  BoxShadow(
+                    color: Colors.grey,
+                    offset: Offset(0, 4),
+                  ),
+                ],
+        ),
+        margin: EdgeInsets.symmetric(
+          horizontal: Get.width * .02,
+          vertical: Get.height * .015,
+        ),
+        padding: EdgeInsets.symmetric(
+            horizontal: Get.width * .05, vertical: Get.height * .01),
+        child: Text(
+          status,
+          style: TextStyle(
+            color: selected == true ? Colors.white : Colors.black,
+          ),
         ),
       ),
     );
