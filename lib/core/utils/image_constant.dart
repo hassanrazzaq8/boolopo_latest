@@ -84,5 +84,9 @@ class ImageConstant {
   static const defaultImage = "assets/images/defaultImage.jpg";
   static const appLogo = "assets/images/app_logo.png";
   static const freeShippingIcon = "assets/images/free-shipping.png";
+  static const contactIcon = "assets/images/contact-mail.png";
+
+  static const customerSupportIcon = "assets/images/customer-support.png";
+  static const whatsappIcon = "assets/images/whatsapp.png";
 
 }

@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -12,6 +13,7 @@ import 'package:watch_app/presentation/dashboard/favorite/favorite_screen.dart';
 import 'package:watch_app/presentation/dashboard/home/home_page.dart';
 import 'package:watch_app/presentation/dashboard/profile/profile_screen.dart';
 import 'package:watch_app/presentation/dashboard/shopping_cart/my_cart.dart';
+import 'package:watch_app/presentation/webView/app_web_view.dart';
 import 'package:watch_app/providers/cart_provider.dart';
 import 'package:watch_app/providers/favourite_provider.dart';
 import 'package:watch_app/utills/color.dart';
@@ -34,6 +36,19 @@ class BottomBarScreenState extends State<BottomBarScreen> {
   final BottomBarController _con = Get.put(BottomBarController());
 
   bool showBrands = false;
+  DateTime backPressTime = DateTime.now();
+
+  Future<bool> exiteApp() {
+    print("exite app");
+    DateTime now = DateTime.now();
+    if (now.difference(backPressTime) < Duration(seconds: 2)) {
+      return Future(() => true);
+    } else {
+      backPressTime = DateTime.now();
+      toastMessage();
+      return Future(() => false);
+    }
+  }
 
   @override
   void initState() {
@@ -41,80 +56,95 @@ class BottomBarScreenState extends State<BottomBarScreen> {
     _con.getBrands(context);
   }
 
+  toastMessage() {
+    return BotToast.showText(
+      text: "Press Again To Exit",
+      contentColor: Colors.grey.shade700,
+      align: const Alignment(0, .6),
+      borderRadius: BorderRadius.circular(Get.height * .2),
+      textStyle: TextStyle(
+        fontSize: Get.textScaleFactor * 16,
+        color: Colors.white,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Obx(
-      () => Scaffold(
-        drawer: drawerOpen(),
-        key: _con.scaffoldKey,
-        appBar: _con.pageIndex.value == 0
-            ? appBar(
-                text: "BOO--LOPO",
-                leadingPressed: () {
-                  _con.openDrawer();
-                },
-                back: false,
-                actionIcon: true,
-                action: ImageConstant.notification,
-                search: true,
-              )
-            : _con.pageIndex.value == 1
-                ? appBar(
-                    text: AppString.shoppingCart,
-                    back: false,
-                    actionIcon: true,
-                    leadingPressed: () {
-                      _con.openDrawer();
-                    },
-                  )
-                : _con.pageIndex.value == 2
-                    ? appBar(
-                        text: AppString.favorite,
-                        back: false,
-                        actionIcon: true,
-                        leadingPressed: () {
-                          _con.openDrawer();
-                        },
-
-                      )
-                    : appBar(
-                        actionPressed: () {
-                          Storage.isUserLogin
-                              ? Get.toNamed(AppRoutes.editProfileScreen)
-                                  ?.then((value) {
-                                  setState(() {});
-                                })
-                              : () {};
-                        },
-                        backgroundColor: AppColors.appColor,
-                        action: ImageConstant.editprofile,
-                        text: AppString.profile,
-                        back: false,
-                        actionIcon: true,
-                        leadingPressed: () {
-                          _con.openDrawer();
-                        },
-                      ),
-        body: _con.pageIndex.value == 0
-            ? const HomePage()
-            : _con.pageIndex.value == 1
-                ? const Cart()
-                : _con.pageIndex.value == 2
-                    ? const FavoriteScreen()
-                    : _con.pageIndex.value == 3
-                        ? Storage.isUserLogin
-                            ? ProfileScreen()
-                            : Center(
-                                child: AppButton(
-                                  text: "Login",
-                                  width: Get.width / 3,
-                                  onPressed: () {
-                                    Get.offAllNamed(AppRoutes.loginScreen);
-                                  },
-                                ),
-                              )
-                        : const HomePage(),
-        bottomNavigationBar: bottombar(),
+      () => WillPopScope(
+        onWillPop: exiteApp,
+        child: Scaffold(
+          drawer: drawerOpen(),
+          key: _con.scaffoldKey,
+          appBar: _con.pageIndex.value == 0
+              ? appBar(
+                  text: "BOO--LOPO",
+                  leadingPressed: () {
+                    _con.openDrawer();
+                  },
+                  back: false,
+                  actionIcon: true,
+                  action: ImageConstant.notification,
+                  search: true,
+                )
+              : _con.pageIndex.value == 1
+                  ? appBar(
+                      text: AppString.shoppingCart,
+                      back: false,
+                      actionIcon: true,
+                      leadingPressed: () {
+                        _con.openDrawer();
+                      },
+                    )
+                  : _con.pageIndex.value == 2
+                      ? appBar(
+                          text: AppString.favorite,
+                          back: false,
+                          actionIcon: true,
+                          leadingPressed: () {
+                            _con.openDrawer();
+                          },
+                        )
+                      : appBar(
+                          actionPressed: () {
+                            Storage.isUserLogin
+                                ? Get.toNamed(AppRoutes.editProfileScreen)
+                                    ?.then((value) {
+                                    setState(() {});
+                                  })
+                                : () {};
+                          },
+                          backgroundColor: AppColors.appColor,
+                          action: ImageConstant.editprofile,
+                          text: AppString.profile,
+                          back: false,
+                          actionIcon: true,
+                          leadingPressed: () {
+                            _con.openDrawer();
+                          },
+                        ),
+          body: _con.pageIndex.value == 0
+              ? const HomePage()
+              : _con.pageIndex.value == 1
+                  ? const Cart()
+                  : _con.pageIndex.value == 2
+                      ? const FavoriteScreen()
+                      : _con.pageIndex.value == 3
+                          ? Storage.isUserLogin
+                              ? ProfileScreen()
+                              : Center(
+                                  child: AppButton(
+                                    text: "Login",
+                                    width: Get.width / 3,
+                                    onPressed: () {
+                                      Get.offAllNamed(AppRoutes.loginScreen);
+                                    },
+                                  ),
+                                )
+                          : const HomePage(),
+          bottomNavigationBar: bottombar(),
+        ),
       ),
     );
   }
@@ -223,7 +253,11 @@ class BottomBarScreenState extends State<BottomBarScreen> {
                         _con.drawerIndex.value == 0
                             ? Get.toNamed(AppRoutes.orderSummaryScreen)
                             : _con.drawerIndex.value == 2
-                                ? Get.toNamed(AppRoutes.faqscreen)
+                                ? Get.to(
+                                    () => AppWebView(
+                                        url: "https://boolopo.co/faq-page/",
+                                        title: "FAQS"),
+                                  )
                                 : _con.drawerIndex.value == 3
                                     ? Platform.isIOS
                                         ? showDialog(
@@ -286,119 +320,128 @@ class BottomBarScreenState extends State<BottomBarScreen> {
                                     : null;
                       },
                       child: index == 1
-                          ?_con.pageIndex.value==0? Column(
-                              children: [
-                                Container(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 15),
-                                  width: Get.width,
-                                  child: Row(
-                                    children: [
-                                      Image.asset(
-                                        _con.drawerList[index].image,
-                                        height: 20,
-                                        width: 20,
-                                        color: Colors.white,
+                          ? _con.pageIndex.value == 0
+                              ? Column(
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 15),
+                                      width: Get.width,
+                                      child: Row(
+                                        children: [
+                                          Image.asset(
+                                            _con.drawerList[index].image,
+                                            height: 20,
+                                            width: 20,
+                                            color: Colors.white,
+                                          ),
+                                          wSizedBox16,
+                                          Text(
+                                            _con.drawerList[index].title,
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w400,
+                                            ),
+                                          ),
+                                          const Spacer(),
+                                          IconButton(
+                                            onPressed: () {
+                                              setState(() {
+                                                showBrands = !showBrands;
+                                              });
+                                            },
+                                            icon: showBrands
+                                                ? Transform.flip(
+                                                    flipY: true,
+                                                    child: const Icon(
+                                                      Icons
+                                                          .arrow_drop_down_circle_outlined,
+                                                      color: Colors.white,
+                                                    ),
+                                                  )
+                                                : const Icon(
+                                                    Icons
+                                                        .arrow_drop_down_circle_outlined,
+                                                    color: Colors.white,
+                                                  ),
+                                          ),
+                                        ],
                                       ),
-                                      wSizedBox16,
-                                      Text(
-                                        _con.drawerList[index].title,
-                                        style: const TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w400,
-                                        ),
-                                      ),
-                                      const Spacer(),
-                                      IconButton(
-                                        onPressed: () {
-                                          setState(() {
-                                            showBrands = !showBrands;
-                                          });
-                                        },
-                                        icon: showBrands
-                                            ? Transform.flip(
-                                                flipY: true,
-                                                child: const Icon(
-                                                  Icons
-                                                      .arrow_drop_down_circle_outlined,
-                                                  color: Colors.white,
-                                                ),
-                                              )
-                                            : const Icon(
-                                                Icons
-                                                    .arrow_drop_down_circle_outlined,
-                                                color: Colors.white,
-                                              ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                showBrands
-                                    ? SizedBox(
-                                        height: Get.height * .18,
-                                        child: ScrollConfiguration(
-                                          behavior: const ScrollBehavior()
-                                              .copyWith(overscroll: false),
-                                          child: ListView.builder(
-                                            padding: EdgeInsets.zero,
-                                            itemCount: _con.getAllBrandsModel
-                                                    .brandlist?.length ??
-                                                0,
-                                            shrinkWrap: true,
-                                            itemBuilder: (context, index) {
-                                              return GestureDetector(
-                                                onTap: () {
-                                                  setState(() {
-                                                    _con.selectedLeftitem
-                                                        .value = -1;
-                                                    _con.selectedTopItem.value =
-                                                        -1;
-                                                    _con.brandId.value = _con
+                                    ),
+                                    showBrands
+                                        ? SizedBox(
+                                            height: Get.height * .18,
+                                            child: ScrollConfiguration(
+                                              behavior: const ScrollBehavior()
+                                                  .copyWith(overscroll: false),
+                                              child: ListView.builder(
+                                                padding: EdgeInsets.zero,
+                                                itemCount: _con
+                                                        .getAllBrandsModel
+                                                        .brandlist
+                                                        ?.length ??
+                                                    0,
+                                                shrinkWrap: true,
+                                                itemBuilder: (context, index) {
+                                                  return GestureDetector(
+                                                    onTap: () {
+                                                      setState(() {
+                                                        _con.selectedLeftitem
+                                                            .value = -1;
+                                                        _con.selectedTopItem
+                                                            .value = -1;
+                                                        _con.brandId
+                                                            .value = _con
+                                                                .getAllBrandsModel
+                                                                .brandlist?[
+                                                                    index]
+                                                                .termId
+                                                                .toString() ??
+                                                            "3103";
+                                                      });
+                                                      Get.back();
+                                                      _con.getProducts(
+                                                        context,
+                                                        selectedOption:
+                                                            GetProductsBy
+                                                                .brands,
+                                                        brandId: _con
                                                             .getAllBrandsModel
                                                             .brandlist?[index]
                                                             .termId
-                                                            .toString() ??
-                                                        "3103";
-                                                  });
-                                                  Get.back();
-                                                  _con.getProducts(
-                                                    context,
-                                                    selectedOption:
-                                                        GetProductsBy.brands,
-                                                    brandId: _con
-                                                        .getAllBrandsModel
-                                                        .brandlist?[index]
-                                                        .termId
-                                                        .toString(),
+                                                            .toString(),
+                                                      );
+                                                    },
+                                                    child: Container(
+                                                      padding: const EdgeInsets
+                                                              .symmetric(
+                                                          vertical: 15),
+                                                      width: Get.width,
+                                                      child: Text(
+                                                        _con
+                                                                .getAllBrandsModel
+                                                                .brandlist?[
+                                                                    index]
+                                                                .name ??
+                                                            "",
+                                                        style: const TextStyle(
+                                                          fontSize: 14,
+                                                          color: Colors.white,
+                                                          fontWeight:
+                                                              FontWeight.w400,
+                                                        ),
+                                                      ),
+                                                    ),
                                                   );
                                                 },
-                                                child: Container(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(vertical: 15),
-                                                  width: Get.width,
-                                                  child: Text(
-                                                    _con
-                                                            .getAllBrandsModel
-                                                            .brandlist?[index]
-                                                            .name ??
-                                                        "",
-                                                    style: const TextStyle(
-                                                      fontSize: 14,
-                                                      color: Colors.white,
-                                                      fontWeight:
-                                                          FontWeight.w400,
-                                                    ),
-                                                  ),
-                                                ),
-                                              );
-                                            },
-                                          ),
-                                        ),
-                                      )
-                                    : const SizedBox.shrink(),
-                              ],
-                            ):const SizedBox.shrink()
+                                              ),
+                                            ),
+                                          )
+                                        : const SizedBox.shrink(),
+                                  ],
+                                )
+                              : const SizedBox.shrink()
                           : Container(
                               padding: const EdgeInsets.symmetric(vertical: 15),
                               width: Get.width,

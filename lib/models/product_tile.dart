@@ -11,10 +11,11 @@ class ProductTile extends StatefulWidget {
     required this.name,
     this.onIconTap,
     this.onProductTap,
-    this.isFavourite = false, required this.price,
+    this.isFavourite = false,
+    required this.price,
   }) : super(key: key);
   final String imageUrl;
-  final String name,price;
+  final String name, price;
   Function()? onIconTap, onProductTap;
   bool isFavourite;
 
@@ -23,14 +24,13 @@ class ProductTile extends StatefulWidget {
 }
 
 class _ProductTileState extends State<ProductTile> {
-
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: widget.onProductTap,
       child: Card(
-        shadowColor: themeColor,
-
+        shadowColor: Colors.grey,
+        borderOnForeground: true,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(
             15,
@@ -42,42 +42,47 @@ class _ProductTileState extends State<ProductTile> {
         child: Container(
           width: Get.width * .4,
           padding: const EdgeInsets.symmetric(horizontal: 5),
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: Colors.grey,
+            ),
+            borderRadius: BorderRadius.circular(
+              15,
+            ),
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Align(
-                  alignment: Alignment.topRight,
-                  child: IconButton(
-                    onPressed: widget.onIconTap,
-                    icon: Container(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            width: 2,
-                            color: Colors.grey,
-                          ),
-                        ),
-                        alignment: Alignment.center,
-                        child: widget.isFavourite
-                            ? const Icon(
-                                Icons.favorite,
-                                color: Colors.grey,
-                                size: 20,
-                              )
-                            : const Icon(
-                                Icons.favorite_border,
-                                color: Colors.grey,
-                                size: 18,
-                              ),
+                alignment: Alignment.topRight,
+                child: IconButton(
+                  onPressed: widget.onIconTap,
+                  icon: Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        width: 2,
+                        color: Colors.grey,
                       ),
                     ),
+                    alignment: Alignment.center,
+                    child: widget.isFavourite
+                        ? const Icon(
+                            Icons.favorite,
+                            color: Colors.grey,
+                            size: 20,
+                          )
+                        : const Icon(
+                            Icons.favorite_border,
+                            color: Colors.grey,
+                            size: 18,
+                          ),
                   ),
-
-
-              hSizedBox10,
+                ),
+              ),
               Align(
                 child: SizedBox(
-                  height: Get.height * .1,
+                  height: Get.height * .12,
                   width: double.infinity,
                   child: Image.network(
                     widget.imageUrl,
@@ -103,20 +108,28 @@ class _ProductTileState extends State<ProductTile> {
               ),
               hSizedBox10,
               Text(
-                widget.name,
-                style: GoogleFonts.oswald(),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
+                " \$ ${widget.price}",
+                style: GoogleFonts.poppins(
+                  fontWeight: FontWeight.bold,
+                  color: themeColor,
+                  fontSize: Get.textScaleFactor*14,
+                  fontStyle: FontStyle.italic,
+                  decoration: TextDecoration.underline,
+                ),
               ),
               hSizedBox6,
               Text(
-                " \$ ${widget.price}",
-                style: GoogleFonts.poppins(
-                    fontWeight: FontWeight.bold,
-                    color: themeColor,
-                    fontSize: 17,
-                    fontStyle: FontStyle.italic),
+                widget.name,
+                 style: GoogleFonts.poppins(
+                fontWeight: FontWeight.w600,
+                color: Colors.black,
+                fontSize: Get.textScaleFactor*10,
               ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+
+              ),
+
             ],
           ),
         ),

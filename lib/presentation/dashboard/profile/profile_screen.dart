@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:watch_app/core/utils/app_string.dart';
 import 'package:watch_app/presentation/bottomBar/bottombar_controller.dart';
 import 'package:watch_app/presentation/commamn/clip_path.dart';
@@ -49,18 +50,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             image: NetworkImage(Storage.readData(
                                         AppString.profileImage) !=
                                     null
-                                ? Storage.readData(AppString.profileImage)!.isNotEmpty
                                 ? Storage.readData(AppString.profileImage)!
+                                        .isNotEmpty
+                                    ? Storage.readData(AppString.profileImage)!
                                     : "https://sin5.org/images/faces/1.jpg"
-                                    : "https://sin5.org/images/faces/1.jpg"),
+                                : "https://sin5.org/images/faces/1.jpg"),
                           ),
                         ),
                       ),
                     ),
                     hSizedBox10,
-                    Text(
-                      username,
-                      style: const TextStyle(
+                    const Text(
+                      "Welcome back",
+                      style: TextStyle(
                         fontSize: 16,
                         color: Colors.white,
                         fontWeight: FontWeight.w600,
@@ -68,11 +70,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     hSizedBox6,
                     Text(
-                      email,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 14,
-                      ),
+                      "${Storage.readData(AppString.firstName)} ${Storage.readData(AppString.lastName)}",
+                      style: GoogleFonts.ubuntu(
+                      color: Colors.white,
+                      fontSize: Get.textScaleFactor*28,
+                        fontWeight: FontWeight.w600,
+                      )
                     ),
                   ],
                 ),
@@ -91,7 +94,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
               name: AppString.myOrders,
               ontap: () {
                 Get.toNamed(AppRoutes.myOrdersScreen);
-
               },
             ),
             profileList(
@@ -102,17 +104,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
               },
             ),
             profileList(
-              icon: ImageConstant.setting,
-              name: AppString.settings,
+              icon: ImageConstant.contactIcon,
+              name: AppString.contactus,
               ontap: () {
-                Get.toNamed(AppRoutes.settingScreen);
+                Get.toNamed(AppRoutes.contactUsScreen);
               },
             ),
             profileList(
               icon: ImageConstant.aboutUs,
               name: AppString.aboutUs,
               ontap: () {
-                Get.toNamed(AppRoutes.contactUsScreen);
+
+                Get.to(
+                  () => AppWebView(
+                      url: "https://boolopo.co/about-us/", title: "About Us"),
+                );
               },
             ),
             // TextButton(
@@ -162,7 +168,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           children: [
             Image.asset(
               icon,
-              color: AppColors.yellowColor,
+              color: Colors.black,
               height: 20,
               width: 30,
             ),
@@ -187,15 +193,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
     );
   }
-  // String apiKey = '';
-  // Coinbase? coinbase;
-  // String output = 'Output';
-  //
-  //
-  //
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   coinbase = Coinbase(apiKey, debug: true);
-  // }
+// String apiKey = '';
+// Coinbase? coinbase;
+// String output = 'Output';
+//
+//
+//
+// @override
+// void initState() {
+//   super.initState();
+//   coinbase = Coinbase(apiKey, debug: true);
+// }
 }

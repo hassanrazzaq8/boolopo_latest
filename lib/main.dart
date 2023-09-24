@@ -1,3 +1,4 @@
+import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -39,6 +40,7 @@ class MyApp extends StatelessWidget {
       ],
       child: GetMaterialApp(
         debugShowCheckedModeBanner: false,
+        builder: BotToastInit(),
         initialRoute: AppRoutes.splashScreen,
         theme: AppTheme.themeData,
         getPages: AppRoutes.pages,

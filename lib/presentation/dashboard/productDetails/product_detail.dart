@@ -65,6 +65,7 @@ class _ProductDetailState extends State<ProductDetail> {
 
     return Scaffold(
       key: scaffoldkey,
+      backgroundColor: Colors.white,
       appBar: AppBar(
         // backgroundColor: Colors.blue,
         backgroundColor: Colors.white,
@@ -184,13 +185,17 @@ class _ProductDetailState extends State<ProductDetail> {
                             alignment: Alignment.bottomCenter,
                             children: [
                               SizedBox(
-                                height:
-                                    MediaQuery.of(context).size.height * .38,
+                                // height:
+                                //     MediaQuery.of(context).size.height * .38,
                                 width: double.infinity,
                                 child: CarouselSlider(
                                   options: CarouselOptions(
                                     reverse: false,
-                                    height: Get.height * .38,
+                                    height: productDetailsModel
+                                                .attributes?.first.name !=
+                                            "Size"
+                                        ? Get.height * .50
+                                        : Get.height * .38,
                                     viewportFraction: 1,
                                     onPageChanged: (index, reason) {
                                       setState(() {
@@ -502,98 +507,101 @@ class _ProductDetailState extends State<ProductDetail> {
                       ),
                     ),
                     hSizedBox20,
-                    Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: Get.width * .05),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey),
-                          color: Colors.grey[100],
-                        ),
-                        child: Column(
-                          children: [
-                            Container(
-                              height: Get.height * 0.07,
-                              width: Get.width,
-                              // margin: const EdgeInsets.symmetric(horizontal: 8.0),
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: Get.width * 0.05),
+                    productDetailsModel.attributes?.first.name == "Size"
+                        ? Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: Get.width * .05),
+                            child: Container(
                               decoration: BoxDecoration(
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.grey.shade200,
-                                    blurRadius: 0,
-                                    offset: const Offset(0, 3),
-                                  )
-                                ],
-                                color: Colors.transparent,
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(Get.height * .01),
-                                ),
+                                border: Border.all(color: Colors.grey),
+                                color: Colors.grey[100],
                               ),
-                              child: ButtonTheme(
-                                child: DropdownButton<dynamic>(
-                                  menuMaxHeight: Get.height * .55,
-                                  hint: const Text(
-                                    "Select the Size",
-                                    style: TextStyle(
-                                      color: Colors.grey,
-                                      fontSize: 15.0,
+                              child: Column(
+                                children: [
+                                  Container(
+                                    height: Get.height * 0.07,
+                                    width: Get.width,
+                                    // margin: const EdgeInsets.symmetric(horizontal: 8.0),
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: Get.width * 0.05),
+                                    decoration: BoxDecoration(
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.grey.shade200,
+                                          blurRadius: 0,
+                                          offset: const Offset(0, 3),
+                                        )
+                                      ],
+                                      color: Colors.transparent,
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(Get.height * .01),
+                                      ),
+                                    ),
+                                    child: ButtonTheme(
+                                      child: DropdownButton<dynamic>(
+                                        menuMaxHeight: Get.height * .55,
+                                        hint: const Text(
+                                          "Select the Size",
+                                          style: TextStyle(
+                                            color: Colors.grey,
+                                            fontSize: 15.0,
+                                          ),
+                                        ),
+                                        value: selectedSize,
+                                        isExpanded: true,
+                                        icon: Icon(
+                                          Icons.keyboard_arrow_down,
+                                          color: Colors.black,
+                                          size: Get.height * .035,
+                                        ),
+                                        underline: const SizedBox(),
+                                        onChanged: (newValue) {
+                                          setState(() {
+                                            selectedSize = newValue;
+                                          });
+                                        },
+                                        items: productDetailsModel
+                                            .attributes!.first.options!
+                                            .map((item) => DropdownMenuItem(
+                                                value: item,
+                                                child: Text(
+                                                  item,
+                                                  style: const TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 15.0,
+                                                  ),
+                                                )))
+                                            .toList(),
+                                      ),
                                     ),
                                   ),
-                                  value: selectedSize,
-                                  isExpanded: true,
-                                  icon: Icon(
-                                    Icons.keyboard_arrow_down,
-                                    color: Colors.black,
-                                    size: Get.height * .035,
+                                  // hSizedBox10,
+                                  // const Align(
+                                  //   alignment: Alignment.topLeft,
+                                  //   child: Text("COULDN'T FIND YOUR SIZE?"),
+                                  // ),
+                                  // const SizedBox(
+                                  //   height: 2,
+                                  // ),
+                                  Container(
+                                    color: Colors.grey,
+                                    height: 1,
                                   ),
-                                  underline: const SizedBox(),
-                                  onChanged: (newValue) {
-                                    setState(() {
-                                      selectedSize = newValue;
-                                    });
-                                  },
-                                  items: productDetailsModel
-                                      .attributes!.first.options!
-                                      .map((item) => DropdownMenuItem(
-                                          value: item,
-                                          child: Text(
-                                            item,
-                                            style: const TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 15.0,
-                                            ),
-                                          )))
-                                      .toList(),
-                                ),
+                                  TextField(
+                                      controller: sizeController,
+                                      decoration: InputDecoration(
+                                        hintText:
+                                            "Write your size here in US or EUR",
+                                        border: InputBorder.none,
+                                        contentPadding: EdgeInsets.only(
+                                            left: Get.width * .05),
+                                      )),
+                                  hSizedBox10,
+                                ],
                               ),
                             ),
-                            // hSizedBox10,
-                            // const Align(
-                            //   alignment: Alignment.topLeft,
-                            //   child: Text("COULDN'T FIND YOUR SIZE?"),
-                            // ),
-                            // const SizedBox(
-                            //   height: 2,
-                            // ),
-                            Container(
-                              color: Colors.grey,
-                              height: 1,
-                            ),
-                            TextField(
-                                controller: sizeController,
-                                decoration: InputDecoration(
-                                  hintText: "Write your size here in US or EUR",
-                                  border: InputBorder.none,
-                                  contentPadding:
-                                      EdgeInsets.only(left: Get.width * .05),
-                                )),
-                            hSizedBox10,
-                          ],
-                        ),
-                      ),
-                    ),
+                          )
+                        : const SizedBox.shrink(),
                   ],
                 ),
               ),

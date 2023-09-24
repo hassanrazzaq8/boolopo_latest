@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:watch_app/core/app_export.dart';
 import 'package:watch_app/core/utils/app_string.dart';
 import 'package:watch_app/presentation/commamn/app_bar.dart';
 import 'package:watch_app/presentation/commamn/app_button.dart';
+import 'package:watch_app/presentation/webView/app_web_view.dart';
 
 import 'contact_us_controlller.dart';
 
@@ -33,62 +35,59 @@ class ContactUsScreen extends StatelessWidget {
               ),
               hSizedBox20,
               Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Expanded(
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      height: 50,
-                      decoration: BoxDecoration(
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Colors.black12,
-                            blurRadius: 10.0,
-                            spreadRadius: .5,
-                          ),
-                        ],
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      child: Row(
-                        children: [
-                          Image.asset(
-                            ImageConstant.emailus,
-                            color: AppColors.appColor,
-                            height: 18,
-                          ),
-                          wSizedBox10,
-                          Expanded(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  AppString.email,
-                                  style: const TextStyle(
-                                    color: Color(0xff707070),
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                                const Text(
-                                  "ingo@info.com",
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 13,
-                                      color: Colors.black),
-                                ),
-                              ],
+                  GestureDetector(
+                      onTap: () {
+                        Get.to(
+                          () => AppWebView(
+                              url: "https://boolopo.co/submit-ticket/",
+                              title: "Open a Ticket"),
+                        );
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        height: 50,
+                        decoration: BoxDecoration(
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Colors.black12,
+                              blurRadius: 10.0,
+                              spreadRadius: .5,
                             ),
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
+                          ],
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        child: Row(
+                          children: [
+                            Image.asset(
+                              ImageConstant.customerSupportIcon,
+                              color: Colors.black,
+                              height: Get.height * .035,
+                            ),
+                            wSizedBox10,
+                            Text(
+                              "Open a Ticket",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: Get.textScaleFactor * 14,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      )),
                   wSizedBox14,
-                  Expanded(
+                  GestureDetector(
+                    onTap: () {
+                      launchUrl(
+                        Uri.parse("https://wa.me/+15015047548"),
+                        mode: LaunchMode.externalApplication,
+                      );
+                    },
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
                       height: 50,
                       decoration: BoxDecoration(
                         boxShadow: const [
@@ -104,32 +103,19 @@ class ContactUsScreen extends StatelessWidget {
                       child: Row(
                         children: [
                           Image.asset(
-                            ImageConstant.call,
-                            color: AppColors.appColor,
-                            height: 20,
+                            ImageConstant.whatsappIcon,
+                            color: Colors.black,
+                            height: Get.height * .035,
                           ),
                           wSizedBox10,
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                AppString.phNo,
-                                style: const TextStyle(
-                                  color: Color(0xff707070),
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                              const Text(
-                                "+00 894 371 234",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 14,
-                                    color: Colors.black),
-                              ),
-                            ],
-                          )
+                          Text(
+                            "Whatsapp",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: Get.textScaleFactor * 14,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
                         ],
                       ),
                     ),
