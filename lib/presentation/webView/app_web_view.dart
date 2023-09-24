@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:watch_app/utills/color.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -106,8 +107,11 @@ Page resource error:
       onWillPop: () async {
         if (widget.onBackTap != null) {
           widget.onBackTap!();
-        } else {}
-        return false;
+          return false;
+        } else {
+          return true;
+        }
+
       },
       child: Scaffold(
         appBar: AppBar(
@@ -129,7 +133,13 @@ Page resource error:
                     color:  Colors.black,
                     height:  18,
                   ),
-                  onPressed:widget.onBackTap,
+                  onPressed:() {
+                    if(widget.onBackTap!=null){
+                      widget.onBackTap!();
+                    }else{
+                      Get.back();
+                    }
+                  },
                 ),
               ),
           centerTitle: true,

@@ -83,4 +83,6 @@ class ImageConstant {
 
   static const defaultImage = "assets/images/defaultImage.jpg";
   static const appLogo = "assets/images/app_logo.png";
+  static const freeShippingIcon = "assets/images/free-shipping.png";
+
 }

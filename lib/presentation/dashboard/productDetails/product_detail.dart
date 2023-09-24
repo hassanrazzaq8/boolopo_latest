@@ -12,6 +12,7 @@ import 'package:watch_app/api/url.dart';
 import 'package:watch_app/core/app_export.dart';
 import 'package:watch_app/core/utils/app_string.dart';
 import 'package:watch_app/presentation/bottomBar/bottombar_screen.dart';
+import 'package:watch_app/presentation/commamn/app_button.dart';
 import 'package:watch_app/providers/cart_provider.dart';
 import 'package:watch_app/providers/favourite_provider.dart';
 import 'package:watch_app/utills/color.dart';
@@ -39,7 +40,7 @@ class _ProductDetailState extends State<ProductDetail> {
   TextEditingController sizeController = TextEditingController();
   final int count = 1;
   String? review;
-  int currentIndex=0;
+  int currentIndex = 0;
 
   @override
   void initState() {
@@ -62,495 +63,542 @@ class _ProductDetailState extends State<ProductDetail> {
     final cartProvider = Provider.of<ProviderCart>(context);
     final favouriteProvider = Provider.of<FavoProvider>(context);
 
-    return MaterialApp(
-      theme: ThemeData(
-        scaffoldBackgroundColor: Colors.white,
-      ),
-      home: Scaffold(
-        key: scaffoldkey,
-        appBar: AppBar(
-          // backgroundColor: Colors.blue,
-          backgroundColor: Colors.white,
-          elevation: 0.0,
-          leading: IconButton(
-            icon: const Icon(
-              Icons.arrow_back_ios_new,
-              color: Colors.black,
-              size: 20,
-            ),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
+    return Scaffold(
+      key: scaffoldkey,
+      appBar: AppBar(
+        // backgroundColor: Colors.blue,
+        backgroundColor: Colors.white,
+        elevation: 0.0,
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back_ios_new,
+            color: Colors.black,
+            size: 20,
           ),
-          title: Text(
-            "BOO--LOPO",
-            style: GoogleFonts.oswald(
-              color: Colors.black,
-            ),
-          ),
-          centerTitle: true,
-          actions: [
-            IconButton(
-              onPressed: () {
-                scaffoldkey.currentState!.openDrawer();
-              },
-              icon: Image.asset(ImageConstant.menu),
-              iconSize: 20,
-            ),
-          ],
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
         ),
-        drawer: BottomBarScreenState().drawerOpen(),
-        bottomNavigationBar: detailsFetch
-            ? Padding(
-                padding: const EdgeInsets.only(bottom: 8.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    IconButton(
-                      onPressed: () {
-                        if (Storage.isUserLogin) {
-                          favouriteProvider.favorite(
-                            productDetailsModel.name!,
-                            productDetailsModel.price!,
+        title: Text(
+          "BOO--LOPO",
+          style: GoogleFonts.oswald(
+            color: Colors.black,
+          ),
+        ),
+        centerTitle: true,
+        actions: [
+          IconButton(
+            onPressed: () {
+              scaffoldkey.currentState!.openDrawer();
+            },
+            icon: Image.asset(ImageConstant.menu),
+            iconSize: 20,
+          ),
+        ],
+      ),
+      drawer: BottomBarScreenState().drawerOpen(),
+      bottomNavigationBar: detailsFetch
+          ? Padding(
+              padding: const EdgeInsets.only(bottom: 8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  IconButton(
+                    onPressed: () {
+                      if (Storage.isUserLogin) {
+                        favouriteProvider.favorite(
+                          productDetailsModel.name!,
+                          productDetailsModel.price!,
+                          productDetailsModel.images?.first.src ?? "",
+                          productDetailsModel.id.toString(),
+                        );
+                      } else {
+                        customDialogue(
+                            message:
+                                "Please login to add products to favourite");
+                      }
+                    },
+                    icon:
+                        favouriteProvider.isFavourite(productDetailsModel.name!)
+                            ? Icon(
+                                Icons.favorite,
+                                color: Colors.grey.shade800,
+                              )
+                            : Icon(
+                                Icons.favorite_border,
+                                color: Colors.grey.shade800,
+                              ),
+                  ),
+                  AppButton(
+                    text: "Add To Cart",
+                    width: Get.width / 2,
+                    onPressed: () {
+                      if (Storage.isUserLogin) {
+                        if (selectedSize != null) {
+                          cartProvider.addToCart(
+                            widget.id,
+                            productDetailsModel.name ?? "",
+                            productDetailsModel.price ?? "",
+                            count,
                             productDetailsModel.images?.first.src ?? "",
-                            productDetailsModel.id.toString(),
                           );
+                          showSnackBar("Product added to your cart", context);
+                          Navigator.pop(context);
                         } else {
                           customDialogue(
                               message:
-                                  "Please login to add products to favourite");
+                                  "Please select size of your product to continue");
                         }
-                      },
-                      icon: favouriteProvider
-                              .isFavourite(productDetailsModel.name!)
-                          ? Icon(
-                              Icons.favorite,
-                              color: Colors.grey.shade800,
-                            )
-                          : Icon(
-                              Icons.favorite_border,
-                              color: Colors.grey.shade800,
-                            ),
+                      } else {
+                        customDialogue(
+                          message: "Please login to add products to cart",
+                        );
+                      }
+                    },
+                  ),
+                  IconButton(
+                    onPressed: () {},
+                    icon: const Icon(
+                      Icons.shopping_cart,
+                      color: Colors.grey,
                     ),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: themeColor,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(
-                              20,
-                            ),
-                          ),
-                          minimumSize: const Size(150, 50)),
-                      onPressed: () {
-                        if (Storage.isUserLogin) {
-                          if (selectedSize != null) {
-                            cartProvider.addToCart(
-                              widget.id,
-                              productDetailsModel.name ?? "",
-                              productDetailsModel.price ?? "",
-                              count,
-                              productDetailsModel.images?.first.src ?? "",
-                            );
-                            showSnackBar("Product added to your cart", context);
-                            Navigator.pop(context);
-                          } else {
-                            customDialogue(
-                                message:
-                                    "Please select size of your product to continue");
-                          }
-                        } else {
-                          customDialogue(
-                            message: "Please login to add products to cart",
-                          );
-                        }
-                      },
-                      child: const Text(
-                        "Add To Cart",
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+            )
+          : const SizedBox.shrink(),
+      body: detailsFetch
+          ? SingleChildScrollView(
+              child: Container(
+                color: Colors.white,
+                child: Column(
+                  children: [
+                    Container(
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        // color: const Color.fromARGB(248, 9, 34, 90).withOpacity(.40),
                       ),
-                    ),
-                    IconButton(
-                      onPressed: () {},
-                      icon: const Icon(
-                        Icons.shopping_cart,
-                        color: Colors.grey,
-                      ),
-                    ),
-                  ],
-                ),
-              )
-            : const SizedBox.shrink(),
-        body: detailsFetch
-            ? SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 18.0),
-                  child: Column(
-                    children: [
-                      Align(
-                        alignment: Alignment.topCenter,
-                        child: Text(
-                          productDetailsModel.name ?? "",
-                          style: GoogleFonts.oswald(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Container(
-                        decoration: const BoxDecoration(
-                          color: Colors.white,
-                          // color: const Color.fromARGB(248, 9, 34, 90).withOpacity(.40),
-                        ),
-                        child: Column(
-                          children: [
-                            SizedBox(
-                              height: MediaQuery.of(context).size.height * .38,
-                              width: double.infinity,
-                               child: CarouselSlider(
-                                 options: CarouselOptions(
-                                   // height:
-                                   viewportFraction: 1,
-                                   onPageChanged:
-                                       (index, reason) {
-                                     setState(() {
-                                       currentIndex=index;
-                                     });
-                                   },
-
-                                 ),
+                      child: Column(
+                        children: [
+                          Stack(
+                            alignment: Alignment.bottomCenter,
+                            children: [
+                              SizedBox(
+                                height:
+                                    MediaQuery.of(context).size.height * .38,
+                                width: double.infinity,
+                                child: CarouselSlider(
+                                  options: CarouselOptions(
+                                    reverse: false,
+                                    height: Get.height * .38,
+                                    viewportFraction: 1,
+                                    onPageChanged: (index, reason) {
+                                      setState(() {
+                                        currentIndex = index;
+                                      });
+                                    },
+                                  ),
                                   items: productDetailsModel.images?.map((i) {
                                     return Builder(
                                       builder: (BuildContext context) {
                                         return Container(
-                                            width: MediaQuery.of(context).size.width,
-                                            margin: const EdgeInsets.symmetric(horizontal: 10.0),
+                                          width:
+                                              MediaQuery.of(context).size.width,
+                                          margin: const EdgeInsets.symmetric(
+                                              horizontal: 10.0),
 
-                                            child:
-                                            Image.network(
-                                              i.src ?? "",
-                                              fit: BoxFit.cover,
-                                              errorBuilder: (context, error, stackTrace) {
-                                                return Icon(
-                                                  Icons.image_not_supported_rounded,
-                                                  size: Get.height * .3,
-                                                  color: Colors.black26,
+                                          child: Image.network(
+                                            i.src ?? "",
+                                            fit: BoxFit.cover,
+                                            errorBuilder:
+                                                (context, error, stackTrace) {
+                                              return Icon(
+                                                Icons
+                                                    .image_not_supported_rounded,
+                                                size: Get.height * .3,
+                                                color: Colors.black26,
+                                              );
+                                            },
+                                            loadingBuilder: (context, child,
+                                                loadingProgress) {
+                                              if (loadingProgress != null) {
+                                                return const Center(
+                                                  child:
+                                                      CupertinoActivityIndicator(),
                                                 );
-                                              },
-                                              loadingBuilder:
-                                                  (context, child, loadingProgress) {
-                                                if (loadingProgress != null) {
-                                                  return const Center(
-                                                    child: CupertinoActivityIndicator(),
-                                                  );
-                                                } else {
-                                                  return child;
-                                                }
-                                              },
-                                            ),
-                                            // Text('text $i', style: const TextStyle(fontSize: 16.0),)
+                                              } else {
+                                                return child;
+                                              }
+                                            },
+                                          ),
+                                          // Text('text $i', style: const TextStyle(fontSize: 16.0),)
                                         );
                                       },
                                     );
                                   }).toList(),
                                 ),
-                            ),
-                            DotsIndicator(
-                              dotsCount: productDetailsModel.images?.length??0,
-                              position: currentIndex,
-                              decorator: DotsDecorator(
-                                activeColor: themeColor,
-
                               ),
-                            ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  " \$ ${productDetailsModel.price ?? ""}",
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    color: themeColor,
-                                    fontStyle: FontStyle.italic,
+                              Positioned(
+                                child: Container(
+                                  width: Get.width,
+                                  color: Colors.black,
+                                  alignment: Alignment.center,
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: Get.height * .01),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Image.asset(
+                                        ImageConstant.freeShippingIcon,
+                                        height: Get.height * .03,
+                                        color: Colors.white,
+                                      ),
+                                      wSizedBox4,
+                                      Text(
+                                        "Free Worldwide Shipping",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: Get.textScaleFactor * 12,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                              ],
+                              ),
+                            ],
+                          ),
+                          DotsIndicator(
+                            dotsCount: productDetailsModel.images?.length ?? 0,
+                            position: currentIndex,
+                            decorator: DotsDecorator(
+                              activeColor: themeColor,
                             ),
+                          ),
+                          const SizedBox(height: 10),
+                          Align(
+                            alignment: Alignment.topCenter,
+                            child: Text(
+                              productDetailsModel.name ?? "",
+                              style: GoogleFonts.oswald(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 15),
+                          Row(
+                            children: [
+                              Text(
+                                " \$ ${productDetailsModel.price ?? ""}",
+                                style: GoogleFonts.poppins(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: themeColor,
+                                  fontStyle: FontStyle.italic,
+                                ),
+                              ),
+                              wSizedBox8,
+                              RatingBar.builder(
+                                initialRating: double.parse(review ?? "0.0"),
+                                minRating: 1,
+                                direction: Axis.horizontal,
+                                allowHalfRating: true,
+                                itemCount: 5,
+                                itemPadding: EdgeInsets.zero,
+                                itemSize: Get.height * .03,
+                                itemBuilder: (context, _) => Icon(
+                                  Icons.star,
+                                  color: themeColor,
+                                ),
+                                onRatingUpdate: (rating) {
+                                  print(rating);
+                                },
+                              ),
+                              const Spacer(),
+                              InkWell(
+                                onTap: () {
+                                  if (Storage.isUserLogin) {
+                                    showModalBottomSheet(
+                                        enableDrag: true,
+                                        isScrollControlled: true,
+                                        backgroundColor: Colors.transparent,
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return Container(
+                                            width: Get.width,
+                                            padding: EdgeInsets.only(
+                                                bottom: MediaQuery.of(context)
+                                                    .viewInsets
+                                                    .bottom),
+                                            decoration: BoxDecoration(
+                                                color: Colors.grey.shade100,
+                                                borderRadius:
+                                                    const BorderRadius.only(
+                                                        topRight:
+                                                            Radius.circular(20),
+                                                        topLeft:
+                                                            Radius.circular(
+                                                                20))),
+                                            child: SingleChildScrollView(
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  const SizedBox(
+                                                    height: 10,
+                                                  ),
+                                                  Container(
+                                                    height: 4,
+                                                    width: Get.width * 0.22,
+                                                    color: Colors.grey,
+                                                  ),
+                                                  const SizedBox(
+                                                    height: 10,
+                                                  ),
+                                                  Text(
+                                                    "What is Your Rate",
+                                                    style: TextStyle(
+                                                        color: Colors
+                                                            .grey.shade700,
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        fontSize: 17),
+                                                  ),
+                                                  const SizedBox(
+                                                    height: 10,
+                                                  ),
+                                                  RatingBar.builder(
+                                                    initialRating: double.parse(
+                                                        rating ?? "2.0"),
+                                                    minRating: 1,
+                                                    direction: Axis.horizontal,
+                                                    allowHalfRating: true,
+                                                    itemCount: 5,
+                                                    itemPadding:
+                                                        const EdgeInsets
+                                                                .symmetric(
+                                                            horizontal: 4.0),
+                                                    itemBuilder: (context, _) =>
+                                                        const Icon(
+                                                      Icons.star,
+                                                      color: Colors.amber,
+                                                    ),
+                                                    onRatingUpdate: (value) {
+                                                      setState(() {
+                                                        rating =
+                                                            value.toString();
+                                                      });
+                                                      print("rating : $rating");
+                                                    },
+                                                  ),
+                                                  const SizedBox(
+                                                    height: 15,
+                                                  ),
+                                                  Text(
+                                                    "Please Share your Opinion",
+                                                    style: TextStyle(
+                                                        color: Colors
+                                                            .grey.shade700,
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        fontSize: 22),
+                                                  ),
+                                                  Text(
+                                                    "About the Product",
+                                                    style: TextStyle(
+                                                        color: Colors
+                                                            .grey.shade700,
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        fontSize: 22),
+                                                  ),
+                                                  const SizedBox(
+                                                    height: 10,
+                                                  ),
+                                                  Container(
+                                                    height: Get.height * 0.2,
+                                                    width: Get.width * 0.85,
+                                                    color: Colors.white,
+                                                    child: TextFormField(
+                                                      onChanged: (value) {
+                                                        setState(() {
+                                                          comment = value;
+                                                        });
+                                                      },
+                                                      decoration:
+                                                          const InputDecoration(
+                                                        border:
+                                                            InputBorder.none,
+                                                        hintText: 'Your review',
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  const SizedBox(
+                                                    height: 20,
+                                                  ),
+                                                  GestureDetector(
+                                                    onTap: () {
+                                                      Get.back();
+                                                      addRating();
+                                                    },
+                                                    child: Container(
+                                                      height: 42,
+                                                      width: Get.width * 0.5,
+                                                      decoration: BoxDecoration(
+                                                          color: themeColor,
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                      30)),
+                                                      child: const Center(
+                                                        child: Text(
+                                                          "Send Reviews",
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.white,
+                                                              fontSize: 17,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  )
+                                                ],
+                                              ),
+                                            ),
+                                          );
+                                        });
+                                  } else {
+                                    customDialogue(
+                                        message:
+                                            "Please Login to give rating about product");
+                                  }
+                                },
+                                child: Container(
+                                  height: 50,
+                                  width: Get.width * 0.3,
+                                  decoration: const BoxDecoration(
+                                      color: Colors.black,
+                                      borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(30),
+                                          bottomLeft: Radius.circular(30))),
+                                  child: Center(
+                                    child: Text(
+                                      "ADD REVIEW",
+                                      style: GoogleFonts.oswald(
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 18,
+                                          color: Colors.white),
+                                    ),
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    hSizedBox20,
+                    Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: Get.width * .05),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey),
+                          color: Colors.grey[100],
+                        ),
+                        child: Column(
+                          children: [
+                            Container(
+                              height: Get.height * 0.07,
+                              width: Get.width,
+                              // margin: const EdgeInsets.symmetric(horizontal: 8.0),
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: Get.width * 0.05),
+                              decoration: BoxDecoration(
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.shade200,
+                                    blurRadius: 0,
+                                    offset: const Offset(0, 3),
+                                  )
+                                ],
+                                color: Colors.transparent,
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(Get.height * .01),
+                                ),
+                              ),
+                              child: ButtonTheme(
+                                child: DropdownButton<dynamic>(
+                                  menuMaxHeight: Get.height * .55,
+                                  hint: const Text(
+                                    "Select the Size",
+                                    style: TextStyle(
+                                      color: Colors.grey,
+                                      fontSize: 15.0,
+                                    ),
+                                  ),
+                                  value: selectedSize,
+                                  isExpanded: true,
+                                  icon: Icon(
+                                    Icons.keyboard_arrow_down,
+                                    color: Colors.black,
+                                    size: Get.height * .035,
+                                  ),
+                                  underline: const SizedBox(),
+                                  onChanged: (newValue) {
+                                    setState(() {
+                                      selectedSize = newValue;
+                                    });
+                                  },
+                                  items: productDetailsModel
+                                      .attributes!.first.options!
+                                      .map((item) => DropdownMenuItem(
+                                          value: item,
+                                          child: Text(
+                                            item,
+                                            style: const TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 15.0,
+                                            ),
+                                          )))
+                                      .toList(),
+                                ),
+                              ),
+                            ),
+                            // hSizedBox10,
+                            // const Align(
+                            //   alignment: Alignment.topLeft,
+                            //   child: Text("COULDN'T FIND YOUR SIZE?"),
+                            // ),
+                            // const SizedBox(
+                            //   height: 2,
+                            // ),
+                            Container(
+                              color: Colors.grey,
+                              height: 1,
+                            ),
+                            TextField(
+                                controller: sizeController,
+                                decoration: InputDecoration(
+                                  hintText: "Write your size here in US or EUR",
+                                  border: InputBorder.none,
+                                  contentPadding:
+                                      EdgeInsets.only(left: Get.width * .05),
+                                )),
+                            hSizedBox10,
                           ],
                         ),
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          RatingBar.builder(
-                            initialRating: double.parse(review ?? "0.0"),
-                            minRating: 1,
-                            direction: Axis.horizontal,
-                            allowHalfRating: true,
-                            itemCount: 5,
-                            itemPadding: EdgeInsets.zero,
-                            itemBuilder: (context, _) => Icon(
-                              Icons.star,
-                              color: themeColor,
-                            ),
-                            onRatingUpdate: (rating) {
-                              print(rating);
-                            },
-                          ),
-                          InkWell(
-                            onTap: () {
-                              if (Storage.isUserLogin) {
-                                showModalBottomSheet(
-                                    enableDrag: true,
-                                    isScrollControlled: true,
-                                    backgroundColor: Colors.transparent,
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return Container(
-                                        width: Get.width,
-                                        padding: EdgeInsets.only(
-                                            bottom: MediaQuery.of(context)
-                                                .viewInsets
-                                                .bottom),
-                                        decoration: BoxDecoration(
-                                            color: Colors.grey.shade100,
-                                            borderRadius:
-                                                const BorderRadius.only(
-                                                    topRight:
-                                                        Radius.circular(20),
-                                                    topLeft:
-                                                        Radius.circular(20))),
-                                        child: SingleChildScrollView(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              const SizedBox(
-                                                height: 10,
-                                              ),
-                                              Container(
-                                                height: 4,
-                                                width: Get.width * 0.22,
-                                                color: Colors.grey,
-                                              ),
-                                              const SizedBox(
-                                                height: 10,
-                                              ),
-                                              Text(
-                                                "What is Your Rate",
-                                                style: TextStyle(
-                                                    color: Colors.grey.shade700,
-                                                    fontWeight: FontWeight.w600,
-                                                    fontSize: 17),
-                                              ),
-                                              const SizedBox(
-                                                height: 10,
-                                              ),
-                                              RatingBar.builder(
-                                                initialRating: double.parse(
-                                                    rating ?? "2.0"),
-                                                minRating: 1,
-                                                direction: Axis.horizontal,
-                                                allowHalfRating: true,
-                                                itemCount: 5,
-                                                itemPadding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 4.0),
-                                                itemBuilder: (context, _) =>
-                                                    const Icon(
-                                                  Icons.star,
-                                                  color: Colors.amber,
-                                                ),
-                                                onRatingUpdate: (value) {
-                                                  setState(() {
-                                                    rating = value.toString();
-                                                  });
-                                                  print("rating : $rating");
-                                                },
-                                              ),
-                                              const SizedBox(
-                                                height: 15,
-                                              ),
-                                              Text(
-                                                "Please Share your Opinion",
-                                                style: TextStyle(
-                                                    color: Colors.grey.shade700,
-                                                    fontWeight: FontWeight.w600,
-                                                    fontSize: 22),
-                                              ),
-                                              Text(
-                                                "About the Product",
-                                                style: TextStyle(
-                                                    color: Colors.grey.shade700,
-                                                    fontWeight: FontWeight.w600,
-                                                    fontSize: 22),
-                                              ),
-                                              const SizedBox(
-                                                height: 10,
-                                              ),
-                                              Container(
-                                                height: Get.height * 0.2,
-                                                width: Get.width * 0.85,
-                                                color: Colors.white,
-                                                child: TextFormField(
-                                                  onChanged: (value) {
-                                                    setState(() {
-                                                      comment = value;
-                                                    });
-                                                  },
-                                                  decoration:
-                                                      const InputDecoration(
-                                                    border: InputBorder.none,
-                                                    hintText: 'Your review',
-                                                  ),
-                                                ),
-                                              ),
-                                              const SizedBox(
-                                                height: 20,
-                                              ),
-                                              GestureDetector(
-                                                onTap: () {
-                                                  Get.back();
-                                                  addRating();
-                                                },
-                                                child: Container(
-                                                  height: 42,
-                                                  width: Get.width * 0.5,
-                                                  decoration: BoxDecoration(
-                                                      color: themeColor,
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              30)),
-                                                  child: const Center(
-                                                    child: Text(
-                                                      "Send Reviews",
-                                                      style: TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize: 17,
-                                                          fontWeight:
-                                                              FontWeight.w600),
-                                                    ),
-                                                  ),
-                                                ),
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                      );
-                                    });
-                              } else {
-                                customDialogue(
-                                    message:
-                                        "Please Login to give rating about product");
-                              }
-                            },
-                            child: Container(
-                              height: 50,
-                              width: Get.width * 0.3,
-                              decoration: BoxDecoration(
-                                  color: themeColor,
-                                  borderRadius: const BorderRadius.only(
-                                      topLeft: Radius.circular(30),
-                                      bottomLeft: Radius.circular(30))),
-                              child: Center(
-                                child: Text(
-                                  "ADD REVIEW",
-                                  style: GoogleFonts.oswald(
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 18,
-                                      color: Colors.white),
-                                ),
-                              ),
-                            ),
-                          )
-                        ],
-                      ),
-                      hSizedBox10,
-                      Container(
-                        height: Get.height * 0.07,
-                        width: Get.width,
-                        // margin: const EdgeInsets.symmetric(horizontal: 8.0),
-                        padding:
-                            EdgeInsets.symmetric(horizontal: Get.width * 0.05),
-                        decoration: BoxDecoration(
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.shade200,
-                                blurRadius: 0,
-                                offset: const Offset(0, 3),
-                              )
-                            ],
-                            color: Colors.white,
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(Get.height * .01),
-                            ),
-                            border: Border.all(color: Colors.black)),
-                        child: ButtonTheme(
-                          child: DropdownButton<dynamic>(
-                            menuMaxHeight: Get.height * .55,
-                            hint: const Text(
-                              "Select the Size",
-                              style: TextStyle(
-                                color: Colors.grey,
-                                fontSize: 15.0,
-                              ),
-                            ),
-                            value: selectedSize,
-                            isExpanded: true,
-                            icon: Icon(
-                              Icons.keyboard_arrow_down,
-                              color: Colors.black,
-                              size: Get.height * .035,
-                            ),
-                            underline: const SizedBox(),
-                            onChanged: (newValue) {
-                              setState(() {
-                                selectedSize = newValue;
-                              });
-                            },
-                            items:
-                                productDetailsModel.attributes!.first.options!
-                                    .map((item) => DropdownMenuItem(
-                                        value: item,
-                                        child: Text(
-                                          item,
-                                          style: const TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 15.0,
-                                          ),
-                                        )))
-                                    .toList(),
-                          ),
-                        ),
-                      ),
-                      hSizedBox10,
-                      const Align(
-                        alignment: Alignment.topLeft,
-                        child: Text("COULDN'T FIND YOUR SIZE?"),
-                      ),
-                      const SizedBox(
-                        height: 2,
-                      ),
-                      TextField(
-                          controller: sizeController,
-                          decoration: const InputDecoration(
-                            hintText: "Write your size here in US or EUR",
-                            border: OutlineInputBorder(),
-                          )),
-                      hSizedBox10,
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              )
-            : Loader.apiLoading(color: Colors.black),
-      ),
+              ),
+            )
+          : Loader.apiLoading(color: Colors.black),
     );
   }
 

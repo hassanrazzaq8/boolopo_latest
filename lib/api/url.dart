@@ -10,7 +10,7 @@ const String placeOrderApi="$mainUrl/place_order.php";
 const String getRatingsApi="$mainUrl/getproductreview.php";
 const String addRatingsApi="$mainUrl/addproductrating.php";
 const String getOrdersApi="$mainUrl/myorders.php";
-
+const String searchProductsApi="$mainUrl/productsearch.php";
 
 //Product Details api different main url
 const String getProductDetailsApi="https://boolopo.co/wp-json/wc/v3/products";

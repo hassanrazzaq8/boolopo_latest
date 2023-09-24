@@ -3,12 +3,19 @@ import 'package:get_storage/get_storage.dart';
 import 'package:watch_app/core/utils/app_string.dart';
 import 'package:watch_app/presentation/bottomBar/bottombar_controller.dart';
 import 'package:watch_app/presentation/commamn/clip_path.dart';
+import 'package:watch_app/presentation/webView/app_web_view.dart';
 import 'package:watch_app/utills/storage.dart';
-
+import 'package:coinbase_commerce/coinbase_commerce.dart';
 import '../../../core/app_export.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   ProfileScreen({Key? key}) : super(key: key);
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
   final BottomBarController _barController = Get.find();
 
   @override
@@ -84,6 +91,7 @@ class ProfileScreen extends StatelessWidget {
               name: AppString.myOrders,
               ontap: () {
                 Get.toNamed(AppRoutes.myOrdersScreen);
+
               },
             ),
             profileList(
@@ -107,7 +115,20 @@ class ProfileScreen extends StatelessWidget {
                 Get.toNamed(AppRoutes.contactUsScreen);
               },
             ),
-            hSizedBox10
+            // TextButton(
+            //   onPressed: () async {
+            //     ChargeObject image = await coinbase!.createCharge(
+            //         name: 'Record Me',
+            //         description: 'description',
+            //         currency: CurrencyType.usd,
+            //         pricingType: PricingType.fixedPrice,
+            //         amount: 40);
+            //     Get.to(()=> AppWebView(url: image.url!, title: "Coinbase Payment"));
+            //
+            //   },
+            //   child: Text('Create a Charge'),
+            // ),
+            hSizedBox10,
           ],
         ),
       ),
@@ -166,4 +187,15 @@ class ProfileScreen extends StatelessWidget {
       ),
     );
   }
+  // String apiKey = '';
+  // Coinbase? coinbase;
+  // String output = 'Output';
+  //
+  //
+  //
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   coinbase = Coinbase(apiKey, debug: true);
+  // }
 }

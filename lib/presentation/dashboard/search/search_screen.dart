@@ -1,113 +1,144 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:watch_app/core/app_export.dart';
 import 'package:watch_app/core/utils/app_string.dart';
+import 'package:watch_app/models/product_tile.dart';
 import 'package:watch_app/presentation/commamn/app_bar.dart';
 import 'package:watch_app/presentation/commamn/serach_box.dart';
+import 'package:watch_app/presentation/dashboard/productDetails/product_detail.dart';
 import 'package:watch_app/presentation/dashboard/search/search_controller.dart';
+import 'package:watch_app/providers/favourite_provider.dart';
+import 'package:watch_app/utills/custom_dialogue.dart';
+import 'package:watch_app/utills/empty_product.dart';
+import 'package:watch_app/utills/loader.dart';
+import 'package:watch_app/utills/storage.dart';
 
-class SearchScreen extends StatelessWidget {
+class SearchScreen extends StatefulWidget {
   SearchScreen({Key? key}) : super(key: key);
+
+  @override
+  State<SearchScreen> createState() => _SearchScreenState();
+}
+
+class _SearchScreenState extends State<SearchScreen> {
   final SearchScreenController _con = Get.put(SearchScreenController());
+
+  Timer? addValueStoppedTyping;
+
+  _onChangeHandler(value) {
+    const duration = Duration(
+      milliseconds: 2000,
+    );
+
+    if (addValueStoppedTyping != null) {
+      setState(() => addValueStoppedTyping!.cancel()); // clear timer
+    }
+
+    setState(
+      () => addValueStoppedTyping = Timer(duration, () {
+        _con.searchProduct(value);
+      }),
+    );
+  }
+
+
+
   @override
   Widget build(BuildContext context) {
+    final favouriteProvider = Provider.of<FavoProvider>(context);
     return Scaffold(
       appBar: appBar(
         text: AppString.srch,
         back: true,
         actionIcon: true,
       ),
-      body: SingleChildScrollView(
-        physics: const ClampingScrollPhysics(),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15),
-          child: Column(
-            children: [
-              searchBox(hint: AppString.search),
-              hSizedBox10,
-              DefaultTabController(
-                length: 4,
-                child: Column(
-                  children: [
-                    SizedBox(
-                      height: 40.0,
-                      child: TabBar(
-                        padding: EdgeInsets.zero,
-                        physics: const BouncingScrollPhysics(),
-                        indicatorColor: Colors.black,
-                        indicatorSize: TabBarIndicatorSize.tab,
-                        unselectedLabelColor: Colors.black.withOpacity(.4),
-                        labelColor: Colors.black,
-                        labelStyle: const TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 16,
-                        ),
-                        labelPadding:
-                            const EdgeInsets.symmetric(horizontal: 0.0),
-                        controller: _con.tabController,
-                        tabs: _con.tabbar,
-                        indicatorWeight: 1.0,
-                        isScrollable: false,
-                      ),
-                    ),
-                    hSizedBox20,
-                    ListView.separated(
-                      shrinkWrap: true,
-                      itemCount: 10,
-                      physics: const ClampingScrollPhysics(),
-                      separatorBuilder: (context, index) {
-                        return Divider(
-                          color: const Color(0xff707070).withOpacity(.15),
-                          thickness: 1,
-                        );
-                      },
-                      itemBuilder: (context, index) {
-                        return Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(8),
-                              margin: const EdgeInsets.symmetric(vertical: 10),
-                              height: 35,
-                              width: 35,
-                              decoration: BoxDecoration(
-                                color: const Color(0xffFFFAF2),
-                                shape: BoxShape.circle,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.grey.shade300,
-                                    blurRadius: 10.0,
-                                    spreadRadius: .5,
-                                  ),
-                                ],
-                              ),
-                              child: Image.asset(
-                                ImageConstant.search,
-                                color: AppColors.yellowColor,
-                              ),
+      body: Container(
+        height: Get.height,
+        width: Get.width,
+        padding: EdgeInsets.symmetric(horizontal: Get.width * .05),
+        child: Column(
+          children: [
+            searchBox(
+              hint: AppString.search,
+              onChange: (value) {
+                _onChangeHandler(value);
+                if(value==null){
+                  _con.searchProduct("");
+                }
+              },
+            ),
+            hSizedBox10,
+            Obx(
+              () => Expanded(
+                child: _con.productSearched.value == true
+                    ? _con.searchedProducts.isNotEmpty
+                        ? GridView.builder(
+                            shrinkWrap: true,
+                            padding: EdgeInsets.only(
+                              top: Get.height * .015,
+                              right: Get.width * .05,
                             ),
-                            wSizedBox20,
-                            const Text(
-                              "Nike Shoe",
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w400,
-                              ),
+                            itemCount: _con.searchedProducts.length,
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              childAspectRatio:
+                                  100 / 160, // getHeight() * .0013,
+                              // mainAxisExtent: getHeight()*.24,
+                              //     getWidth() / (getHeight() / 1.80),
+                              // mainAxisExtent: getHeight() * .235,
                             ),
-                            const Spacer(),
-                            Image.asset(
-                              ImageConstant.close,
-                              height: 15,
-                              width: 15,
-                            )
-                          ],
-                        );
-                      },
-                    ),
-                    hSizedBox10,
-                  ],
-                ),
+                            itemBuilder: (context, index) {
+                              return ProductTile(
+                                imageUrl:
+                                    _con.searchedProducts[index].productImg ??
+                                        "",
+                                name: _con.searchedProducts[index].title ?? "",
+                                price: _con.searchedProducts[index].price
+                                    .toString(),
+                                isFavourite: favouriteProvider.isFavourite(
+                                    _con.searchedProducts[index].title ?? ""),
+                                onIconTap: () {
+                                  if (Storage.isUserLogin) {
+                                    favouriteProvider.favorite(
+                                      _con.searchedProducts[index].title ?? "",
+                                      _con.searchedProducts[index].price
+                                          .toString(),
+                                      _con.searchedProducts[index].productImg ??
+                                          "",
+                                      _con.searchedProducts[index].productId
+                                          .toString(),
+                                    );
+                                  } else {
+                                    customDialogue(
+                                      message:
+                                          "Please login to add products to favourite",
+                                    );
+                                  }
+                                },
+                                onProductTap: () {
+                                  debugPrint(
+                                      "Product id is : ${_con.searchedProducts[index].productId}");
+                                  Get.to(
+                                    () => ProductDetail(
+                                      id: _con.searchedProducts[index].productId
+                                          .toString(),
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                          )
+                        : Icon(
+                            Icons.search_off,
+                            size: Get.height * .1,
+                          )
+                    : Loader.apiLoading(),
               ),
-            ],
-          ),
+            )
+          ],
         ),
       ),
     );

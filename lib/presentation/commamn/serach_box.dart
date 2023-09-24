@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/app_export.dart';
 
-Widget searchBox({TextEditingController? controller, required String hint}) {
+Widget searchBox({TextEditingController? controller, required String hint,Function(String?)?onChange}) {
   return Container(
     padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
     // margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
@@ -27,6 +27,7 @@ Widget searchBox({TextEditingController? controller, required String hint}) {
           color: Colors.black.withOpacity(.35),
           fontSize: 15.0,
         ),
+
         prefixIcon: Padding(
           padding: const EdgeInsets.all(6),
           child: Image.asset(
@@ -34,6 +35,7 @@ Widget searchBox({TextEditingController? controller, required String hint}) {
             color: Colors.black.withOpacity(.7),
           ),
         ),
+
         // suffixIcon: Padding(
         //   padding: const EdgeInsets.all(8.0),
         //   child: Image.asset(
@@ -45,6 +47,7 @@ Widget searchBox({TextEditingController? controller, required String hint}) {
         focusedBorder: InputBorder.none,
         border: InputBorder.none,
       ),
+      onChanged: onChange,
     ),
   );
 }

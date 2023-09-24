@@ -45,6 +45,7 @@ class Api {
     required String url,
     Map<String, dynamic>? parameters,
     Map<String, dynamic>? body,
+    bool? showErrorDialogue,
   }) async {
     try {
       http.Response response = await http.post(
@@ -60,7 +61,10 @@ class Api {
         if (data["status"] == "success") {
           return data;
         } else {
-          customDialogue(message: data["status"]);
+          if(showErrorDialogue==null){
+            customDialogue(message: data["status"]);
+          }
+
           return null;
         }
 
