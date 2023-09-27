@@ -75,11 +75,14 @@ class _CartState extends State<Cart> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               SizedBox(
-                                height: Get.height * .15,
-                                width: Get.width * .25,
-                                child: Image.network(
-                                  test[index]["image"].toString(),
-                                  fit: BoxFit.cover,
+                                height: Get.height * .11,
+                                width: Get.width * .23,
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(Get.width*.02),
+                                  child: Image.network(
+                                    test[index]["image"].toString(),
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
                               ),
                               wSizedBox6,
@@ -89,11 +92,33 @@ class _CartState extends State<Cart> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text(
-                                      test[index]["product_name"],
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
+                                    test[index]["size"] != ""
+                                        ? RichText(
+                                            text: TextSpan(
+                                              text:
+                                                  "${test[index]["product_name"]}, ",
+                                              style: const TextStyle(
+                                                  color: Colors.black),
+                                              children: [
+                                                const TextSpan(
+                                                  text: "Size: ",
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                                TextSpan(
+                                                  text: test[index]["size"],
+                                                ),
+                                              ],
+                                            ),
+                                            maxLines: 3,
+                                            overflow: TextOverflow.ellipsis,
+                                          )
+                                        : Text(
+                                            test[index]["product_name"],
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
                                     FittedBox(
                                       child: Row(
                                         // mainAxisAlignment: MainAxisAlignment.end,

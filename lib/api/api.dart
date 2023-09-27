@@ -46,32 +46,32 @@ class Api {
     Map<String, dynamic>? parameters,
     Map<String, dynamic>? body,
     bool? showErrorDialogue,
+    bool? isPlaceOrder,
   }) async {
     try {
-      http.Response response = await http.post(
-        Uri.parse(url),
-        body: body,
+    http.Response response = await http.post(
+      Uri.parse(url),
+      body: isPlaceOrder == true ? jsonEncode(body) : body,
+    );
+    print(response.body);
+    if (response.statusCode == 200) {
+      var data = jsonDecode(
+        response.body.toString(),
       );
-      print(response.body);
-      if (response.statusCode == 200) {
-        var data = jsonDecode(
-          response.body.toString(),
-        );
-        debugPrint("data after into json : $data");
-        if (data["status"] == "success") {
-          return data;
-        } else {
-          if(showErrorDialogue==null){
-            customDialogue(message: data["status"]);
-          }
-
-          return null;
+      debugPrint("data after into json : $data");
+      if (data["status"] == "success"||data["status"] == "waiting") {
+        return data;
+      } else {
+        if (showErrorDialogue == null) {
+          customDialogue(message: data["status"]);
         }
 
-      } else {
-        customDialogue(message: AppString.badHappenedError);
         return null;
       }
+    } else {
+      customDialogue(message: AppString.badHappenedError);
+      return null;
+    }
     } catch (e) {
       print(e);
       return null;

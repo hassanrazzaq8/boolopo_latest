@@ -7,7 +7,7 @@ class ProviderCart extends ChangeNotifier {
   List get cart => _cart;
 
   void addToCart(
-      String id, String title, String price, int quantity, String image) {
+      String id, String title, String price, int quantity, String image,String size) {
     if (GetStorage().read("myCart") != null) {
       _cart = GetStorage().read("myCart");
     }
@@ -20,6 +20,7 @@ class ProviderCart extends ChangeNotifier {
           "product_price": price,
           "product_qty": quantity,
           "image": image,
+          "size":size,
         },
       );
       GetStorage().write("myCart", _cart);
@@ -31,9 +32,9 @@ class ProviderCart extends ChangeNotifier {
 
   void removeFromCart(String id) {
     List local = GetStorage().read("myCart");
-    final exists = local.where((value) => (value["id"] == id));
+    final exists = local.where((value) => (value["product_id"] == id));
     if (exists.isNotEmpty) {
-      local.removeWhere((value) => (value["id"] == id));
+      local.removeWhere((value) => (value["product_id"] == id));
       print(id);
       GetStorage().write("myCart", local);
     }

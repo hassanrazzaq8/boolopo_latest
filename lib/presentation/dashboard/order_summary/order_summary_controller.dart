@@ -20,7 +20,7 @@ class OrderSummaryController extends GetxController {
     BuildContext? context,
   }) async {
     try {
-      int userId = GetStorage().read(AppString.userId);
+      var userId = GetStorage().read(AppString.userId);
       Map<String, dynamic> body = {
         "user_id": userId,
         "shiping_first_name": shipperDetails["firstName"],
@@ -36,14 +36,17 @@ class OrderSummaryController extends GetxController {
       };
       jsonEncode(body);
       debugPrint("body is : $body");
-      var data = await Api.postMethod(url: placeOrderApi, body: body);
+      var data = await Api.postMethod(
+        url: placeOrderApi,
+        body: body,
+        isPlaceOrder: true,
+      );
       Loader.hideLoader(context);
       if (data != null) {
+        GetStorage().remove("myCart");
         data["payment_link"] != null
             ? paymentMethodDialogue(data["payment_link"])
             : customDialogue(message: AppString.badHappenedError);
-      } else {
-        ;
       }
       debugPrint("data response if I am in luck : $data");
 
@@ -79,11 +82,11 @@ class OrderSummaryController extends GetxController {
                 onPressed: () {
                   Get.back();
                   Get.to(
-                        () => AppWebView(
-                      url:url,
+                    () => AppWebView(
+                      url: url,
                       title: "Payment",
                       onBackTap: () {
-                        Get.offAllNamed(AppRoutes.orderSummaryScreen);
+                        Get.offAllNamed(AppRoutes.myOrdersScreen);
                       },
                     ),
                   );

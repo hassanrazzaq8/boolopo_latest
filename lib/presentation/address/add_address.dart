@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:watch_app/api/api.dart';
+import 'package:watch_app/api/models/countries_states_model.dart';
+import 'package:watch_app/api/models/get_cities_model.dart';
+import 'package:watch_app/api/models/get_states_model.dart';
 import 'package:watch_app/api/url.dart';
 import 'package:watch_app/core/app_export.dart';
 import 'package:watch_app/core/utils/app_string.dart';
@@ -32,7 +35,8 @@ class _AddAddressState extends State<AddAddress> {
   @override
   void initState() {
     super.initState();
-    getCountriesStates(context);
+    // getCountriesStates(context);
+    getCountries(context);
   }
 
   @override
@@ -184,6 +188,7 @@ class _AddAddressState extends State<AddAddress> {
                       shadow: true,
                       hintText: "phone number",
                       errorMessage: _con.cardnoError,
+                      keyboardType: TextInputType.phone,
                       radius: 10,
                       border: true,
                       onChange: (val) {
@@ -309,17 +314,24 @@ class _AddAddressState extends State<AddAddress> {
                         ),
                         underline: const SizedBox(),
                         onChanged: (newValue) {
+                          print("newValue.countryName : ${newValue}");
                           setState(() {
-                            selectedCountry = newValue;
+                            selectedCountry = newValue.toString();
                             selectedState = null;
-                            getStates(selectedCountry!);
+                            selectedCity=null;
                           });
+                          final countryData = getCountriesModel.countrylist
+                              ?.where((list) =>
+                                  list.countryName == selectedCountry);
+                          getStates(context,
+                              countryId:
+                                  countryData!.first.countryId.toString());
                         },
-                        items: countries
-                            .map((item) => DropdownMenuItem(
-                                value: item,
+                        items: getCountriesModel.countrylist
+                            ?.map((item) => DropdownMenuItem(
+                                value: item.countryName!,
                                 child: Text(
-                                  item,
+                                  item.countryName!,
                                   style: const TextStyle(
                                     color: Colors.black,
                                     fontSize: 15.0,
@@ -384,18 +396,97 @@ class _AddAddressState extends State<AddAddress> {
                         onChanged: (newValue) {
                           setState(() {
                             selectedState = newValue;
+                            selectedCity = null;
                           });
+                          final stateData = getStatesModel.statelist
+                              ?.where(
+                                  (list) => list.stateName == selectedState);
+                          getCities(context,
+                              stateId: stateData!.first.stateId.toString());
                         },
-                        items: states
-                            .map((item) => DropdownMenuItem(
-                                value: item,
+                        items: getStatesModel.statelist
+                            ?.map((item) => DropdownMenuItem(
+                                value: item.stateName,
                                 child: Text(
-                                  item,
+                                  item.stateName!,
                                   style: const TextStyle(
                                     color: Colors.black,
                                     fontSize: 15.0,
                                   ),
                                 )))
+                            .toList(),
+                      ),
+                    ),
+                  ),
+
+                ],
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Padding(
+                    padding:
+                    EdgeInsets.symmetric(horizontal: 12.0, vertical: 5),
+                    child: Text(
+                      "City",
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.black54,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                  hSizedBox8,
+                  Container(
+                    height: Get.height * 0.07,
+                    width: Get.width,
+                    margin: const EdgeInsets.symmetric(horizontal: 8.0),
+                    padding: EdgeInsets.symmetric(horizontal: Get.width * 0.05),
+                    decoration: BoxDecoration(
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.shade200,
+                            blurRadius: 0,
+                            offset: const Offset(0, 3),
+                          )
+                        ],
+                        color: Colors.white,
+                        borderRadius: BorderRadius.all(
+                            Radius.circular(Get.height * .01))),
+                    child: ButtonTheme(
+                      child: DropdownButton<dynamic>(
+                        menuMaxHeight: Get.height * .55,
+                        hint: const Text(
+                          "City",
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontSize: 15.0,
+                          ),
+                        ),
+                        value: selectedCity,
+                        isExpanded: true,
+                        icon: Icon(
+                          Icons.keyboard_arrow_down,
+                          color: Colors.black,
+                          size: Get.height * .035,
+                        ),
+                        underline: const SizedBox(),
+                        onChanged: (newValue) {
+                          setState(() {
+                            selectedCity = newValue;
+                          });
+
+                        },
+                        items: getCitiesModel.statelist
+                            ?.map((item) => DropdownMenuItem(
+                            value: item.cityName,
+                            child: Text(
+                              item.cityName!,
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 15.0,
+                              ),
+                            )))
                             .toList(),
                       ),
                     ),
@@ -431,7 +522,7 @@ class _AddAddressState extends State<AddAddress> {
   List<dynamic> countriesStates = [];
   List countries = [];
   List states = [];
-  String? selectedCountry, selectedState;
+  String? selectedCountry, selectedState,selectedCity;
   List currentAddresses = [];
 
   Future<void> getCountriesStates(context) async {
@@ -463,23 +554,23 @@ class _AddAddressState extends State<AddAddress> {
     }
   }
 
-  getStates(String countryName) {
-    final isExist =
-        countriesStates.where((test) => test["name"] == countryName);
-    final data = isExist.toList();
-    debugPrint("data after selecting country : $data");
-    if (data.isNotEmpty) {
-      if (data[0]["states"].isNotEmpty) {
-        for (var i in data[0]["states"]) {
-          states.add(i["name"]);
-        }
-      } else {
-        states = [];
-      }
-    }
+  // getStates(String countryName) {
+  //   final isExist =
+  //       countriesStates.where((test) => test["name"] == countryName);
+  //   final data = isExist.toList();
+  //   debugPrint("data after selecting country : $data");
+  //   if (data.isNotEmpty) {
+  //     if (data[0]["states"].isNotEmpty) {
+  //       for (var i in data[0]["states"]) {
+  //         states.add(i["name"]);
+  //       }
+  //     } else {
+  //       states = [];
+  //     }
+  //   }
 
-    debugPrint("states are : $states");
-  }
+  //   debugPrint("states are : $states");
+  // }
 
   _handleAddress() async {
     Map<String, dynamic> addressData = {
@@ -503,5 +594,71 @@ class _AddAddressState extends State<AddAddress> {
       Get.back();
     });
     setState(() {});
+  }
+
+  GetCountriesModel getCountriesModel = GetCountriesModel();
+  GetStatesModel getStatesModel = GetStatesModel();
+  GetCitiesModel getCitiesModel=GetCitiesModel();
+  Future<void> getCountries(context) async {
+    try {
+      final data = await Api.getMethod(context, url: getCountriesApi);
+      if (data != null) {
+        getCountriesModel = GetCountriesModel.fromJson(data);
+        if (getCountriesModel.countrylist == null) {
+          customDialogue(
+            message:
+            "Something went wrong Please Check the internet connection or restart the application",
+          );
+        } else {
+          debugPrint("countries fetched : ${getCountriesModel.countrylist}");
+        }
+      }
+      setState(() {});
+    } catch (err) {
+      debugPrint("error while fetching countries : $err");
+    }
+  }
+
+  Future<void> getStates(context, {required String countryId}) async {
+    try {
+      Map<String, dynamic> params = {"country_id": countryId};
+      final data = await Api.getMethod(context, url: getStatesApi,parameters: params);
+      if (data != null) {
+        getStatesModel = GetStatesModel.fromJson(data);
+        if (getStatesModel.status == null) {
+          customDialogue(
+            message:
+            "Something went wrong Please Check the internet connection or restart the application",
+          );
+        } else {
+          debugPrint("states fetched : ${getStatesModel.statelist}");
+        }
+      }
+      setState(() {});
+    } catch (err) {
+      debugPrint("error while fetching states : $err");
+    }
+
+  }
+
+  Future<void> getCities(context, {required String stateId}) async {
+    try {
+      Map<String, dynamic> params = {"state_id": stateId};
+      final data = await Api.getMethod(context, url: getCitiesApi,parameters: params);
+      if (data != null) {
+        getCitiesModel = GetCitiesModel.fromJson(data);
+        if (getCitiesModel.status == null) {
+          customDialogue(
+            message:
+            "Something went wrong Please Check the internet connection or restart the application",
+          );
+        } else {
+          debugPrint("states fetched : ${getCitiesModel.statelist}");
+        }
+      }
+      setState(() {});
+    } catch (err) {
+      debugPrint("error while fetching states : $err");
+    }
   }
 }

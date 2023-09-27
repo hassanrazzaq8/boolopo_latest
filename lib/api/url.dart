@@ -11,6 +11,12 @@ const String getRatingsApi="$mainUrl/getproductreview.php";
 const String addRatingsApi="$mainUrl/addproductrating.php";
 const String getOrdersApi="$mainUrl/myorders.php";
 const String searchProductsApi="$mainUrl/productsearch.php";
+const String getNotificationsApi="$mainUrl/get_app_notification.php";
+const String getCountriesApi="$mainUrl/listofallCountries.php";
+const String getStatesApi="$mainUrl/getsatesbyid.php";
+const String getCitiesApi="$mainUrl/getcitiesbysateid.php";
+
+
 
 //Product Details api different main url
 const String getProductDetailsApi="https://boolopo.co/wp-json/wc/v3/products";

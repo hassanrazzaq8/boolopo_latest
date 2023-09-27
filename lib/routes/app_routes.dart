@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:watch_app/prects.dart';
 import 'package:watch_app/presentation/address/add_address.dart';
 import 'package:watch_app/presentation/dashboard/addnewcard/add_new_card_screen.dart';
+import 'package:watch_app/presentation/dashboard/notification/notifications_updated.dart';
 
 import '../presentation/auth/changepassword/change_password_screen.dart';
 import '../presentation/auth/createnewpassword/create_new_password_screen.dart';
@@ -77,7 +78,7 @@ class AppRoutes {
     GetPage(name: successfullyScreen, page: () => const SuccessfullyScreen()),
     GetPage(name: addNewCardScreen, page: () => AddNewCardScreen()),
     GetPage(name: editProfileScreen, page: () => EditProfileScreen()),
-    GetPage(name: notificationScreen, page: () => NotificationScreen()),
+    GetPage(name: notificationScreen, page: () => const Notifications()),
     GetPage(name: reviewsScreen, page: () => ReviewsScreen()),
     GetPage(name: myOrdersScreen, page: () => MyOrdersScreen()),
     GetPage(name: faqscreen, page: () => FAQscreen()),

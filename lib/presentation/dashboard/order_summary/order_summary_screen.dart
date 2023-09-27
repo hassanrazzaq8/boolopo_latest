@@ -25,17 +25,19 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
   @override
   void initState() {
     super.initState();
+
+    cartItems = GetStorage().read("myCart") ?? [];
+    debugPrint("store addresses $storeAddresses");
+  }
+
+
+  @override
+  Widget build(BuildContext context) {
     if (GetStorage().read(AppString.address) != null) {
       storeAddresses = GetStorage().read(AppString.address);
     } else {
       storeAddresses = [];
     }
-    cartItems = GetStorage().read("mycart") ?? [];
-    debugPrint("store addresses $storeAddresses");
-  }
-
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
       appBar: appBar(
         text: AppString.orderSummary,
@@ -57,6 +59,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                 context: context,
                 cart: cartItems,
                 shipperDetails: storeAddresses[_con.isSelectAdd.value]);
+
           }
         },
       ),

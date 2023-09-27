@@ -135,21 +135,37 @@ class _ProductDetailState extends State<ProductDetail> {
                     width: Get.width / 2,
                     onPressed: () {
                       if (Storage.isUserLogin) {
-                        if (selectedSize != null) {
+                        print(productDetailsModel.attributes?.first.name );
+                        if( productDetailsModel.attributes?.first.name == "Size"){
+                          if (selectedSize != null) {
+                            cartProvider.addToCart(
+                              widget.id,
+                              productDetailsModel.name ?? "",
+                              productDetailsModel.price ?? "",
+                              count,
+                              productDetailsModel.images?.first.src ?? "",
+                              selectedSize??"",
+                            );
+                            showSnackBar("Product added to your cart", context);
+                            Navigator.pop(context);
+                          } else {
+                            customDialogue(
+                                message:
+                                "Please select size of your product to continue");
+                          }
+                        }else{
                           cartProvider.addToCart(
                             widget.id,
                             productDetailsModel.name ?? "",
                             productDetailsModel.price ?? "",
                             count,
                             productDetailsModel.images?.first.src ?? "",
+                            selectedSize??"",
                           );
                           showSnackBar("Product added to your cart", context);
-                          Navigator.pop(context);
-                        } else {
-                          customDialogue(
-                              message:
-                                  "Please select size of your product to continue");
+                          Get.back();
                         }
+
                       } else {
                         customDialogue(
                           message: "Please login to add products to cart",
