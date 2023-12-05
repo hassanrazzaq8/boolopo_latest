@@ -216,12 +216,7 @@ class BottomBarScreenState extends State<BottomBarScreen> {
     String email = Storage.readData(AppString.email) ?? "";
     return Drawer(
       backgroundColor: AppColors.appColor,
-      child: Stack(
-        clipBehavior: Clip.none,
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 25),
-            child: Column(
+      child:  Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(height: Get.height * 0.1),
@@ -236,313 +231,321 @@ class BottomBarScreenState extends State<BottomBarScreen> {
                   ),
                 ),
                 hSizedBox36,
-                const Divider(
-                  color: Colors.white,
-                  thickness: 1.5,
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: Get.width*.1),
+                  child: const Divider(
+                    color: Colors.white,
+                    thickness: 1.5,
+                  ),
                 ),
-                hSizedBox36,
-                ListView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: _con.drawerList.length,
-                  padding: EdgeInsets.zero,
-                  itemBuilder: (context, index) {
-                    return GestureDetector(
-                      onTap: () {
-                        _con.drawerIndex.value = index;
-                        _con.drawerIndex.value == 0
-                            ? Get.toNamed(AppRoutes.orderSummaryScreen)
-                            : _con.drawerIndex.value == 2
-                                ? Get.to(
-                                    () => AppWebView(
-                                        url: "https://boolopo.co/faq-page/",
-                                        title: "FAQS"),
-                                  )
-                                : _con.drawerIndex.value == 3
-                                    ? Platform.isIOS
-                                        ? showDialog(
-                                            barrierColor: const Color.fromRGBO(
-                                                0, 0, 0, 0.76),
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return CupertinoAlertDialog(
-                                                title: Text(
-                                                  AppString.logout,
-                                                  style: const TextStyle(
-                                                      fontSize: 18,
-                                                      fontWeight:
-                                                          FontWeight.w600),
-                                                ),
-                                                content: Text(
-                                                  AppString.surelogout,
-                                                ),
-                                                actions: <Widget>[
-                                                  CupertinoDialogAction(
-                                                    isDefaultAction: true,
-                                                    child: Text(
-                                                      AppString.cancel,
-                                                      style: const TextStyle(
-                                                        fontSize: 18,
-                                                        color: Colors.blue,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                      ),
-                                                    ),
-                                                    onPressed: () => Get.back(),
-                                                  ),
-                                                  CupertinoDialogAction(
-                                                    child: Text(
-                                                      AppString.logout,
-                                                      style: const TextStyle(
-                                                        fontSize: 14,
-                                                        color: Colors.red,
-                                                        fontWeight:
-                                                            FontWeight.w400,
-                                                      ),
-                                                    ),
-                                                    onPressed: () {
-                                                      Get.offAllNamed(
-                                                        AppRoutes.loginScreen,
-                                                      );
-                                                    },
-                                                  )
-                                                ],
-                                              );
-                                            })
-                                        : logoutDialog(
-                                            context: Get.context,
-                                            onTap: () {
-                                              Get.offAllNamed(
-                                                  AppRoutes.loginScreen);
-                                              Storage.deleteStorage();
-                                            },
-                                          )
-                                    : null;
-                      },
-                      child: index == 1
-                          ? _con.pageIndex.value == 0
-                              ? Column(
-                                  children: [
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 15),
-                                      width: Get.width,
-                                      child: Row(
-                                        children: [
-                                          Image.asset(
-                                            _con.drawerList[index].image,
-                                            height: 20,
-                                            width: 20,
-                                            color: Colors.white,
-                                          ),
-                                          wSizedBox16,
-                                          Text(
-                                            _con.drawerList[index].title,
-                                            style: const TextStyle(
-                                              fontSize: 14,
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.w400,
-                                            ),
-                                          ),
-                                          const Spacer(),
-                                          IconButton(
-                                            onPressed: () {
-                                              setState(() {
-                                                showBrands = !showBrands;
-                                              });
-                                            },
-                                            icon: showBrands
-                                                ? Transform.flip(
-                                                    flipY: true,
-                                                    child: const Icon(
-                                                      Icons
-                                                          .arrow_drop_down_circle_outlined,
-                                                      color: Colors.white,
-                                                    ),
-                                                  )
-                                                : const Icon(
-                                                    Icons
-                                                        .arrow_drop_down_circle_outlined,
-                                                    color: Colors.white,
-                                                  ),
-                                          ),
-                                        ],
-                                      ),
+                hSizedBox6,
+                Expanded(
+                  child: ListView.builder(
+
+                    shrinkWrap: true,
+                    itemCount: _con.drawerList.length+1,
+                    padding: EdgeInsets.symmetric(horizontal: Get.width*.05),
+                    itemBuilder: (context, index) {
+                      return index==_con.drawerList.length?Storage.isUserLogin
+                          ? Padding(
+                            padding:  EdgeInsets.only(top: Get.height*.03),
+                            child: Row(
+                        children: [
+                            Container(
+                              height: 50,
+                              width: 50,
+                              decoration: BoxDecoration(
+                                image: const DecorationImage(
+                                  fit: BoxFit.cover,
+                                  image: NetworkImage(
+                                      "https://sin5.org/images/faces/1.jpg"),
+                                ),
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: Colors.white,
+                                  width: 3,
+                                ),
+                              ),
+                            ),
+                            wSizedBox20,
+                            Expanded(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    username,
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.white,
                                     ),
-                                    showBrands
-                                        ? SizedBox(
-                                            height: Get.height * .18,
-                                            child: ScrollConfiguration(
-                                              behavior: const ScrollBehavior()
-                                                  .copyWith(overscroll: false),
-                                              child: ListView.builder(
-                                                padding: EdgeInsets.zero,
-                                                itemCount: _con
-                                                        .getAllBrandsModel
-                                                        .brandlist
-                                                        ?.length ??
-                                                    0,
-                                                shrinkWrap: true,
-                                                itemBuilder: (context, index) {
-                                                  return GestureDetector(
-                                                    onTap: () {
-                                                      setState(() {
-                                                        _con.selectedLeftitem
-                                                            .value = -1;
-                                                        _con.selectedTopItem
-                                                            .value = -1;
-                                                        _con.brandId
-                                                            .value = _con
-                                                                .getAllBrandsModel
-                                                                .brandlist?[
-                                                                    index]
-                                                                .termId
-                                                                .toString() ??
-                                                            "3103";
-                                                      });
-                                                      Get.back();
-                                                      _con.getProducts(
-                                                        context,
-                                                        selectedOption:
-                                                            GetProductsBy
-                                                                .brands,
-                                                        brandId: _con
-                                                            .getAllBrandsModel
-                                                            .brandlist?[index]
-                                                            .termId
-                                                            .toString(),
-                                                      );
-                                                    },
-                                                    child: Container(
-                                                      padding: const EdgeInsets
-                                                              .symmetric(
-                                                          vertical: 15),
-                                                      width: Get.width,
+                                  ),
+                                  hSizedBox4,
+                                  Text(
+                                    email,
+                                    style: const TextStyle(
+                                      fontSize: 13,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                        ],
+                      ),
+                          )
+                          : const Text("login") :GestureDetector(
+                        onTap: () {
+                          _con.drawerIndex.value = index;
+                          _con.drawerIndex.value == 0
+                              ? Get.toNamed(AppRoutes.orderSummaryScreen)
+                              : _con.drawerIndex.value == 2
+                                  ? Get.to(
+                                      () => AppWebView(
+                                          url: "https://boolopo.co/faq-page/",
+                                          title: "FAQS"),
+                                    )
+                                  : _con.drawerIndex.value == 3
+                          ? index==3&&!Storage.isUserLogin?Get.offAllNamed(AppRoutes.loginScreen)
+                                      :Platform.isIOS
+                                          ? showDialog(
+                                              barrierColor: const Color.fromRGBO(
+                                                  0, 0, 0, 0.76),
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return CupertinoAlertDialog(
+                                                  title: Text(
+                                                    AppString.logout,
+                                                    style: const TextStyle(
+                                                        fontSize: 18,
+                                                        fontWeight:
+                                                            FontWeight.w600),
+                                                  ),
+                                                  content: Text(
+                                                    AppString.surelogout,
+                                                  ),
+                                                  actions: <Widget>[
+                                                    CupertinoDialogAction(
+                                                      isDefaultAction: true,
                                                       child: Text(
-                                                        _con
-                                                                .getAllBrandsModel
-                                                                .brandlist?[
-                                                                    index]
-                                                                .name ??
-                                                            "",
+                                                        AppString.cancel,
+                                                        style: const TextStyle(
+                                                          fontSize: 18,
+                                                          color: Colors.blue,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                        ),
+                                                      ),
+                                                      onPressed: () => Get.back(),
+                                                    ),
+                                                    CupertinoDialogAction(
+                                                      child: Text(
+                                                        AppString.logout,
                                                         style: const TextStyle(
                                                           fontSize: 14,
-                                                          color: Colors.white,
+                                                          color: Colors.red,
                                                           fontWeight:
                                                               FontWeight.w400,
                                                         ),
                                                       ),
-                                                    ),
-                                                  );
-                                                },
+                                                      onPressed: () {
+                                                        Get.offAllNamed(
+                                                          AppRoutes.loginScreen,
+                                                        );
+                                                      },
+                                                    )
+                                                  ],
+                                                );
+                                              })
+                                          : logoutDialog(
+                                              context: Get.context,
+                                              onTap: () {
+                                                Get.offAllNamed(
+                                                    AppRoutes.loginScreen);
+                                                Storage.deleteStorage();
+                                              },
+                                            )
+                                      : null;
+                        },
+                        child: index == 1
+                            ? _con.pageIndex.value == 0
+                                ? Column(
+                                    children: [
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 15),
+                                        width: Get.width,
+                                        child: Row(
+                                          children: [
+                                            Image.asset(
+                                              _con.drawerList[index].image,
+                                              height: 20,
+                                              width: 20,
+                                              color: Colors.white,
+                                            ),
+                                            wSizedBox16,
+                                            Text(
+                                              _con.drawerList[index].title,
+                                              style: const TextStyle(
+                                                fontSize: 14,
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.w400,
                                               ),
                                             ),
-                                          )
-                                        : const SizedBox.shrink(),
-                                  ],
-                                )
-                              : const SizedBox.shrink()
-                          : Container(
-                              padding: const EdgeInsets.symmetric(vertical: 15),
-                              width: Get.width,
-                              child: Row(
-                                children: [
-                                  Image.asset(
-                                    _con.drawerList[index].image,
-                                    height: 20,
-                                    width: 20,
-                                  ),
-                                  wSizedBox16,
-                                  Text(
-                                    _con.drawerList[index].title,
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w400,
-                                    ),
+                                            const Spacer(),
+                                            IconButton(
+                                              onPressed: () {
+                                                setState(() {
+                                                  showBrands = !showBrands;
+                                                });
+                                              },
+                                              icon: showBrands
+                                                  ? Transform.flip(
+                                                      flipY: true,
+                                                      child: const Icon(
+                                                        Icons
+                                                            .arrow_drop_down_circle_outlined,
+                                                        color: Colors.white,
+                                                      ),
+                                                    )
+                                                  : const Icon(
+                                                      Icons
+                                                          .arrow_drop_down_circle_outlined,
+                                                      color: Colors.white,
+                                                    ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      showBrands
+                                          ? ScrollConfiguration(
+                                                behavior: const ScrollBehavior()
+                                                    .copyWith(overscroll: false),
+                                                child: ListView.builder(
+                                                  physics: const NeverScrollableScrollPhysics(),
+                                                  padding: EdgeInsets.zero,
+                                                  itemCount: _con
+                                                          .getAllBrandsModel
+                                                          .brandlist
+                                                          ?.length ??
+                                                      0,
+                                                  shrinkWrap: true,
+                                                  itemBuilder: (context, index) {
+                                                    return GestureDetector(
+                                                      onTap: () {
+                                                        setState(() {
+                                                          _con.selectedLeftitem
+                                                              .value = -1;
+                                                          _con.selectedTopItem
+                                                              .value = -1;
+                                                          _con.brandId
+                                                              .value = _con
+                                                                  .getAllBrandsModel
+                                                                  .brandlist?[
+                                                                      index]
+                                                                  .termId
+                                                                  .toString() ??
+                                                              "3103";
+                                                        });
+                                                        Get.back();
+                                                        _con.getProducts(
+                                                          context,
+                                                          selectedOption:
+                                                              GetProductsBy
+                                                                  .brands,
+                                                          brandId: _con
+                                                              .getAllBrandsModel
+                                                              .brandlist?[index]
+                                                              .termId
+                                                              .toString(),
+                                                        );
+                                                      },
+                                                      child: Container(
+                                                        padding: const EdgeInsets
+                                                                .symmetric(
+                                                            vertical: 15),
+                                                        width: Get.width,
+                                                        child: Text(
+                                                          _con
+                                                                  .getAllBrandsModel
+                                                                  .brandlist?[
+                                                                      index]
+                                                                  .name ??
+                                                              "",
+                                                          style: const TextStyle(
+                                                            fontSize: 14,
+                                                            color: Colors.white,
+                                                            fontWeight:
+                                                                FontWeight.w400,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    );
+                                                  },
+                                                ),
+
+                                            )
+                                          : const SizedBox.shrink(),
+                                    ],
                                   )
-                                ],
+                                : const SizedBox.shrink()
+                            : Container(
+                                padding: const EdgeInsets.symmetric(vertical: 15),
+                                width: Get.width,
+                                child: Row(
+                                  children: [
+                                    Image.asset(
+                                      _con.drawerList[index].image,
+                                      height: 20,
+                                      width: 20,
+                                    ),
+                                    wSizedBox16,
+                                    Text(
+                                      index==3&&!Storage.isUserLogin?"Login":
+                                      _con.drawerList[index].title,
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                    )
+                                  ],
+                                ),
                               ),
-                            ),
-                    );
-                  },
+                      );
+                    },
+                  ),
                 ),
-                const Spacer(),
-                Storage.isUserLogin
-                    ? Row(
-                        children: [
-                          Container(
-                            height: 50,
-                            width: 50,
-                            decoration: BoxDecoration(
-                              image: const DecorationImage(
-                                fit: BoxFit.cover,
-                                image: NetworkImage(
-                                    "https://sin5.org/images/faces/1.jpg"),
-                              ),
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: Colors.white,
-                                width: 3,
-                              ),
-                            ),
-                          ),
-                          wSizedBox20,
-                          Expanded(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  username,
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                hSizedBox4,
-                                Text(
-                                  email,
-                                  style: const TextStyle(
-                                    fontSize: 13,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      )
-                    : const Text("login"),
+                // const Spacer(),
+
                 hSizedBox30,
               ],
             ),
-          ),
-          Positioned(
-            left: Get.width * 0.69,
-            top: Get.height * 0.04,
-            child: Container(
-              height: 40,
-              width: 40,
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: AppColors.appColor,
-                shape: BoxShape.circle,
-              ),
-              child: GestureDetector(
-                onTap: () {
-                  Get.back();
-                },
-                child: Image.asset(
-                  ImageConstant.cross,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
+
+          // Positioned(
+          //   left: Get.width * 0.69,
+          //   top: Get.height * 0.04,
+          //   child: Container(
+          //     height: 40,
+          //     width: 40,
+          //     padding: const EdgeInsets.all(12),
+          //     decoration: BoxDecoration(
+          //       color: AppColors.appColor,
+          //       shape: BoxShape.circle,
+          //     ),
+          //     child: GestureDetector(
+          //       onTap: () {
+          //         Get.back();
+          //       },
+          //       child: Image.asset(
+          //         ImageConstant.cross,
+          //         color: Colors.white,
+          //       ),
+          //     ),
+          //   ),
+          // ),
+
     );
   }
 }

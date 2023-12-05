@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:watch_app/core/utils/app_string.dart';
+import 'package:watch_app/prects.dart';
 import 'package:watch_app/presentation/bottomBar/bottombar_controller.dart';
 import 'package:watch_app/presentation/commamn/clip_path.dart';
 import 'package:watch_app/presentation/webView/app_web_view.dart';
@@ -70,13 +71,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     hSizedBox6,
                     Text(
-                      "${Storage.readData(AppString.firstName)} ${Storage.readData(AppString.lastName)}",
-                      style: GoogleFonts.ubuntu(
-                      color: Colors.white,
-                      fontSize: Get.textScaleFactor*28,
-                        fontWeight: FontWeight.w600,
-                      )
-                    ),
+                        "${Storage.readData(AppString.firstName)} ${Storage.readData(AppString.lastName)}",
+                        style: GoogleFonts.ubuntu(
+                          color: Colors.white,
+                          fontSize: Get.textScaleFactor * 28,
+                          fontWeight: FontWeight.w600,
+                        )),
                   ],
                 ),
               ),
@@ -94,13 +94,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
               name: AppString.myOrders,
               ontap: () {
                 Get.toNamed(AppRoutes.myOrdersScreen);
+                // Get.to(()=> const Prects());
               },
             ),
             profileList(
               icon: ImageConstant.privacyPolicy,
               name: AppString.privacyPolicy,
               ontap: () {
-                Get.toNamed(AppRoutes.privacyPolicyScreen);
+                Get.to(
+                  () => AppWebView(
+                    url: "https://boolopo.co/privacy-policy/",
+                    title: "Privacy Policy",
+                  ),
+                );
               },
             ),
             profileList(
@@ -114,7 +120,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
               icon: ImageConstant.aboutUs,
               name: AppString.aboutUs,
               ontap: () {
-
                 Get.to(
                   () => AppWebView(
                       url: "https://boolopo.co/about-us/", title: "About Us"),

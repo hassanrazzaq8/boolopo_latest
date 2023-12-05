@@ -25,6 +25,7 @@ class ContactUsScreen extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 15),
           child: Column(
             children: [
+             SizedBox(height: Get.height*.1),
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: 20),
                 height: 217,
@@ -123,148 +124,148 @@ class ContactUsScreen extends StatelessWidget {
                 ],
               ),
               hSizedBox24,
-              Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(15),
-                  color: Colors.white,
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Colors.black12,
-                      blurRadius: 10.0,
-                      spreadRadius: .5,
-                    ),
-                  ],
-                ),
-                child: Column(
-                  children: [
-                    TextFormField(
-                      onChanged: (val) {
-                        _con.name.value = val;
-                      },
-                      decoration: InputDecoration(
-                        hintText: AppString.name,
-                        hintStyle: const TextStyle(
-                          color: Color(0xffC6C6C6),
-                        ),
-                        enabledBorder: const UnderlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Color(0xffC6C6C6),
-                            width: 1.0,
-                          ),
-                        ),
-                        focusedBorder: const UnderlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Color(0xffC6C6C6),
-                            width: 1.0,
-                          ),
-                        ),
-                      ),
-                    ),
-                    Obx(
-                      () => (_con.nameError.value.isNotEmpty)
-                          ? Align(
-                              alignment: Alignment.centerLeft,
-                              child: Container(
-                                color: Colors.transparent,
-                                padding: const EdgeInsets.only(top: 5),
-                                child: Text(
-                                  _con.nameError.value,
-                                  style: const TextStyle(
-                                    color: Colors.red,
-                                    fontSize: 12,
-                                  ),
-                                ),
-                              ),
-                            )
-                          : hSizedBox8,
-                    ),
-                    hSizedBox14,
-                    TextFormField(
-                      onChanged: (val) {
-                        _con.email.value = val;
-                      },
-                      decoration: InputDecoration(
-                        hintText: AppString.email,
-                        hintStyle: const TextStyle(
-                          color: Color(0xffC6C6C6),
-                        ),
-                        enabledBorder: const UnderlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Color(0xffC6C6C6),
-                            width: 1.0,
-                          ),
-                        ),
-                        focusedBorder: const UnderlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Color(0xffC6C6C6),
-                            width: 1.0,
-                          ),
-                        ),
-                      ),
-                    ),
-                    Obx(
-                      () => (_con.emailError.value.isNotEmpty)
-                          ? Align(
-                              alignment: Alignment.centerLeft,
-                              child: Container(
-                                color: Colors.transparent,
-                                padding: const EdgeInsets.only(top: 5),
-                                child: Text(
-                                  _con.emailError.value,
-                                  style: const TextStyle(
-                                    color: Colors.red,
-                                    fontSize: 12,
-                                  ),
-                                ),
-                              ),
-                            )
-                          : hSizedBox8,
-                    ),
-                    hSizedBox14,
-                    TextFormField(
-                      maxLines: 4,
-                      onChanged: (val) {
-                        _con.mes.value = val;
-                      },
-                      decoration: InputDecoration(
-                          hintText: AppString.mes,
-                          hintStyle: const TextStyle(
-                            color: Color(0xffC6C6C6),
-                          ),
-                          border: InputBorder.none),
-                    ),
-                    Obx(
-                      () => (_con.mesError.value.isNotEmpty)
-                          ? Align(
-                              alignment: Alignment.centerLeft,
-                              child: Container(
-                                color: Colors.transparent,
-                                padding: const EdgeInsets.only(top: 5),
-                                child: Text(
-                                  _con.mesError.value,
-                                  style: const TextStyle(
-                                    color: Colors.red,
-                                    fontSize: 12,
-                                  ),
-                                ),
-                              ),
-                            )
-                          : hSizedBox8,
-                    ),
-                  ],
-                ),
-              ),
-              hSizedBox20,
-              AppButton(
-                height: 50,
-                width: Get.width / 2,
-                text: AppString.send,
-                onPressed: () {
-                  _con.onSend();
-                },
-              ),
-              hSizedBox20,
+              // Container(
+              //   padding: const EdgeInsets.all(20),
+              //   decoration: BoxDecoration(
+              //     borderRadius: BorderRadius.circular(15),
+              //     color: Colors.white,
+              //     boxShadow: const [
+              //       BoxShadow(
+              //         color: Colors.black12,
+              //         blurRadius: 10.0,
+              //         spreadRadius: .5,
+              //       ),
+              //     ],
+              //   ),
+              //   child: Column(
+              //     children: [
+              //       TextFormField(
+              //         onChanged: (val) {
+              //           _con.name.value = val;
+              //         },
+              //         decoration: InputDecoration(
+              //           hintText: AppString.name,
+              //           hintStyle: const TextStyle(
+              //             color: Color(0xffC6C6C6),
+              //           ),
+              //           enabledBorder: const UnderlineInputBorder(
+              //             borderSide: BorderSide(
+              //               color: Color(0xffC6C6C6),
+              //               width: 1.0,
+              //             ),
+              //           ),
+              //           focusedBorder: const UnderlineInputBorder(
+              //             borderSide: BorderSide(
+              //               color: Color(0xffC6C6C6),
+              //               width: 1.0,
+              //             ),
+              //           ),
+              //         ),
+              //       ),
+              //       Obx(
+              //         () => (_con.nameError.value.isNotEmpty)
+              //             ? Align(
+              //                 alignment: Alignment.centerLeft,
+              //                 child: Container(
+              //                   color: Colors.transparent,
+              //                   padding: const EdgeInsets.only(top: 5),
+              //                   child: Text(
+              //                     _con.nameError.value,
+              //                     style: const TextStyle(
+              //                       color: Colors.red,
+              //                       fontSize: 12,
+              //                     ),
+              //                   ),
+              //                 ),
+              //               )
+              //             : hSizedBox8,
+              //       ),
+              //       hSizedBox14,
+              //       TextFormField(
+              //         onChanged: (val) {
+              //           _con.email.value = val;
+              //         },
+              //         decoration: InputDecoration(
+              //           hintText: AppString.email,
+              //           hintStyle: const TextStyle(
+              //             color: Color(0xffC6C6C6),
+              //           ),
+              //           enabledBorder: const UnderlineInputBorder(
+              //             borderSide: BorderSide(
+              //               color: Color(0xffC6C6C6),
+              //               width: 1.0,
+              //             ),
+              //           ),
+              //           focusedBorder: const UnderlineInputBorder(
+              //             borderSide: BorderSide(
+              //               color: Color(0xffC6C6C6),
+              //               width: 1.0,
+              //             ),
+              //           ),
+              //         ),
+              //       ),
+              //       Obx(
+              //         () => (_con.emailError.value.isNotEmpty)
+              //             ? Align(
+              //                 alignment: Alignment.centerLeft,
+              //                 child: Container(
+              //                   color: Colors.transparent,
+              //                   padding: const EdgeInsets.only(top: 5),
+              //                   child: Text(
+              //                     _con.emailError.value,
+              //                     style: const TextStyle(
+              //                       color: Colors.red,
+              //                       fontSize: 12,
+              //                     ),
+              //                   ),
+              //                 ),
+              //               )
+              //             : hSizedBox8,
+              //       ),
+              //       hSizedBox14,
+              //       TextFormField(
+              //         maxLines: 4,
+              //         onChanged: (val) {
+              //           _con.mes.value = val;
+              //         },
+              //         decoration: InputDecoration(
+              //             hintText: AppString.mes,
+              //             hintStyle: const TextStyle(
+              //               color: Color(0xffC6C6C6),
+              //             ),
+              //             border: InputBorder.none),
+              //       ),
+              //       Obx(
+              //         () => (_con.mesError.value.isNotEmpty)
+              //             ? Align(
+              //                 alignment: Alignment.centerLeft,
+              //                 child: Container(
+              //                   color: Colors.transparent,
+              //                   padding: const EdgeInsets.only(top: 5),
+              //                   child: Text(
+              //                     _con.mesError.value,
+              //                     style: const TextStyle(
+              //                       color: Colors.red,
+              //                       fontSize: 12,
+              //                     ),
+              //                   ),
+              //                 ),
+              //               )
+              //             : hSizedBox8,
+              //       ),
+              //     ],
+              //   ),
+              // ),
+              // hSizedBox20,
+              // AppButton(
+              //   height: 50,
+              //   width: Get.width / 2,
+              //   text: AppString.send,
+              //   onPressed: () {
+              //     _con.onSend();
+              //   },
+              // ),
+              // hSizedBox20,
             ],
           ),
         ),

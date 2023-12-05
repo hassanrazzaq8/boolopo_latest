@@ -135,8 +135,9 @@ class _ProductDetailState extends State<ProductDetail> {
                     width: Get.width / 2,
                     onPressed: () {
                       if (Storage.isUserLogin) {
-                        print(productDetailsModel.attributes?.first.name );
-                        if( productDetailsModel.attributes?.first.name == "Size"){
+                        print(productDetailsModel.attributes?.first.name);
+                        if (productDetailsModel.attributes?.first.name ==
+                            "Size") {
                           if (selectedSize != null) {
                             cartProvider.addToCart(
                               widget.id,
@@ -144,28 +145,27 @@ class _ProductDetailState extends State<ProductDetail> {
                               productDetailsModel.price ?? "",
                               count,
                               productDetailsModel.images?.first.src ?? "",
-                              selectedSize??"",
+                              selectedSize ?? "",
                             );
                             showSnackBar("Product added to your cart", context);
                             Navigator.pop(context);
                           } else {
                             customDialogue(
                                 message:
-                                "Please select size of your product to continue");
+                                    "Please select size of your product to continue");
                           }
-                        }else{
+                        } else {
                           cartProvider.addToCart(
                             widget.id,
                             productDetailsModel.name ?? "",
                             productDetailsModel.price ?? "",
                             count,
                             productDetailsModel.images?.first.src ?? "",
-                            selectedSize??"",
+                            selectedSize ?? "",
                           );
                           showSnackBar("Product added to your cart", context);
                           Get.back();
                         }
-
                       } else {
                         customDialogue(
                           message: "Please login to add products to cart",
@@ -196,9 +196,21 @@ class _ProductDetailState extends State<ProductDetail> {
                         // color: const Color.fromARGB(248, 9, 34, 90).withOpacity(.40),
                       ),
                       child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Stack(
-                            alignment: Alignment.bottomCenter,
+                          Align(
+                            alignment: Alignment.topCenter,
+                            child: Text(
+                              productDetailsModel.name ?? "",
+                              style: GoogleFonts.oswald(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ),
+                          hSizedBox8,
+                          Column(
+                            // alignment: Alignment.bottomCenter,
                             children: [
                               SizedBox(
                                 // height:
@@ -207,11 +219,15 @@ class _ProductDetailState extends State<ProductDetail> {
                                 child: CarouselSlider(
                                   options: CarouselOptions(
                                     reverse: false,
-                                    height: productDetailsModel
-                                                .attributes?.first.name !=
-                                            "Size"
-                                        ? Get.height * .50
-                                        : Get.height * .38,
+                                    height:
+                                        productDetailsModel.attributes != null
+                                            ? productDetailsModel.attributes!
+                                                    .where((list) =>
+                                                        list.name == "Size")
+                                                    .isNotEmpty
+                                                ? Get.height * .38
+                                                : Get.height * .50
+                                            : Get.height * .50,
                                     viewportFraction: 1,
                                     onPageChanged: (index, reason) {
                                       setState(() {
@@ -259,78 +275,77 @@ class _ProductDetailState extends State<ProductDetail> {
                                   }).toList(),
                                 ),
                               ),
-                              Positioned(
-                                child: Container(
-                                  width: Get.width,
-                                  color: Colors.black,
-                                  alignment: Alignment.center,
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: Get.height * .01),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Image.asset(
-                                        ImageConstant.freeShippingIcon,
-                                        height: Get.height * .03,
+                              Container(
+                                width: Get.width,
+                                color: Colors.black,
+                                alignment: Alignment.center,
+                                padding: EdgeInsets.symmetric(
+                                    vertical: Get.height * .01),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Image.asset(
+                                      ImageConstant.freeShippingIcon,
+                                      height: Get.height * .03,
+                                      color: Colors.white,
+                                    ),
+                                    wSizedBox4,
+                                    Text(
+                                      "Free Worldwide Shipping",
+                                      style: TextStyle(
                                         color: Colors.white,
+                                        fontSize: Get.textScaleFactor * 12,
+                                        fontWeight: FontWeight.bold,
                                       ),
-                                      wSizedBox4,
-                                      Text(
-                                        "Free Worldwide Shipping",
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: Get.textScaleFactor * 12,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ],
                           ),
-                          DotsIndicator(
-                            dotsCount: productDetailsModel.images?.length ?? 0,
-                            position: currentIndex,
-                            decorator: DotsDecorator(
-                              activeColor: themeColor,
+                          Align(
+                            child: DotsIndicator(
+                              dotsCount:
+                                  productDetailsModel.images?.length ?? 0,
+                              position: currentIndex,
+                              decorator: DotsDecorator(
+                                activeColor: themeColor,
+                              ),
                             ),
                           ),
                           const SizedBox(height: 10),
-                          Align(
-                            alignment: Alignment.topCenter,
-                            child: Text(
-                              productDetailsModel.name ?? "",
-                              style: GoogleFonts.oswald(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 20,
-                              ),
+                          Text(
+                            "  ${productDetailsModel.attributes?.last.options?.first??"nil"}",
+                            style: GoogleFonts.poppins(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.grey,
+                              fontStyle: FontStyle.italic,
                             ),
                           ),
-                          const SizedBox(height: 15),
+                          Text(
+                            "  \$ ${productDetailsModel.price ?? ""}",
+                            style: GoogleFonts.poppins(
+                              fontSize: 30,
+                              fontWeight: FontWeight.bold,
+                              color: themeColor,
+                              fontStyle: FontStyle.italic,
+                            ),
+                          ),
                           Row(
                             children: [
-                              Text(
-                                " \$ ${productDetailsModel.price ?? ""}",
-                                style: GoogleFonts.poppins(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: themeColor,
-                                  fontStyle: FontStyle.italic,
-                                ),
-                              ),
                               wSizedBox8,
                               RatingBar.builder(
-                                initialRating: double.parse(review ?? "0.0"),
+                                initialRating: double.parse(review ?? "2.0"),
                                 minRating: 1,
                                 direction: Axis.horizontal,
                                 allowHalfRating: true,
                                 itemCount: 5,
                                 itemPadding: EdgeInsets.zero,
                                 itemSize: Get.height * .03,
-                                itemBuilder: (context, _) => Icon(
+                                itemBuilder: (context, _) => const Icon(
                                   Icons.star,
-                                  color: themeColor,
+                                  color: Colors.black,
                                 ),
                                 onRatingUpdate: (rating) {
                                   print(rating);
@@ -399,7 +414,7 @@ class _ProductDetailState extends State<ProductDetail> {
                                                     itemCount: 5,
                                                     itemPadding:
                                                         const EdgeInsets
-                                                                .symmetric(
+                                                            .symmetric(
                                                             horizontal: 4.0),
                                                     itemBuilder: (context, _) =>
                                                         const Icon(
@@ -523,101 +538,106 @@ class _ProductDetailState extends State<ProductDetail> {
                       ),
                     ),
                     hSizedBox20,
-                    productDetailsModel.attributes?.first.name == "Size"
-                        ? Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: Get.width * .05),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                border: Border.all(color: Colors.grey),
-                                color: Colors.grey[100],
-                              ),
-                              child: Column(
-                                children: [
-                                  Container(
-                                    height: Get.height * 0.07,
-                                    width: Get.width,
-                                    // margin: const EdgeInsets.symmetric(horizontal: 8.0),
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: Get.width * 0.05),
-                                    decoration: BoxDecoration(
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.grey.shade200,
-                                          blurRadius: 0,
-                                          offset: const Offset(0, 3),
-                                        )
-                                      ],
-                                      color: Colors.transparent,
-                                      borderRadius: BorderRadius.all(
-                                        Radius.circular(Get.height * .01),
-                                      ),
-                                    ),
-                                    child: ButtonTheme(
-                                      child: DropdownButton<dynamic>(
-                                        menuMaxHeight: Get.height * .55,
-                                        hint: const Text(
-                                          "Select the Size",
-                                          style: TextStyle(
-                                            color: Colors.grey,
-                                            fontSize: 15.0,
+                    productDetailsModel.attributes != null
+                        ? productDetailsModel.attributes!
+                                .where((list) => list.name == "Size")
+                                .isNotEmpty
+                            ? Padding(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: Get.width * .05),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.grey),
+                                    color: Colors.grey[100],
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      Container(
+                                        height: Get.height * 0.07,
+                                        width: Get.width,
+                                        // margin: const EdgeInsets.symmetric(horizontal: 8.0),
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: Get.width * 0.05),
+                                        decoration: BoxDecoration(
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Colors.grey.shade200,
+                                              blurRadius: 0,
+                                              offset: const Offset(0, 3),
+                                            )
+                                          ],
+                                          color: Colors.transparent,
+                                          borderRadius: BorderRadius.all(
+                                            Radius.circular(Get.height * .01),
                                           ),
                                         ),
-                                        value: selectedSize,
-                                        isExpanded: true,
-                                        icon: Icon(
-                                          Icons.keyboard_arrow_down,
-                                          color: Colors.black,
-                                          size: Get.height * .035,
+                                        child: ButtonTheme(
+                                          child: DropdownButton<dynamic>(
+                                            menuMaxHeight: Get.height * .55,
+                                            hint: const Text(
+                                              "Select the Size",
+                                              style: TextStyle(
+                                                color: Colors.grey,
+                                                fontSize: 15.0,
+                                              ),
+                                            ),
+                                            value: selectedSize,
+                                            isExpanded: true,
+                                            icon: Icon(
+                                              Icons.keyboard_arrow_down,
+                                              color: Colors.black,
+                                              size: Get.height * .035,
+                                            ),
+                                            underline: const SizedBox(),
+                                            onChanged: (newValue) {
+                                              setState(() {
+                                                selectedSize = newValue;
+                                              });
+                                            },
+                                            items: productDetailsModel
+                                                .attributes![sizeIndex ?? 0]
+                                                .options!
+                                                .map((item) => DropdownMenuItem(
+                                                    value: item,
+                                                    child: Text(
+                                                      item,
+                                                      style: const TextStyle(
+                                                        color: Colors.black,
+                                                        fontSize: 15.0,
+                                                      ),
+                                                    )))
+                                                .toList(),
+                                          ),
                                         ),
-                                        underline: const SizedBox(),
-                                        onChanged: (newValue) {
-                                          setState(() {
-                                            selectedSize = newValue;
-                                          });
-                                        },
-                                        items: productDetailsModel
-                                            .attributes!.first.options!
-                                            .map((item) => DropdownMenuItem(
-                                                value: item,
-                                                child: Text(
-                                                  item,
-                                                  style: const TextStyle(
-                                                    color: Colors.black,
-                                                    fontSize: 15.0,
-                                                  ),
-                                                )))
-                                            .toList(),
                                       ),
-                                    ),
+                                      // hSizedBox10,
+                                      // const Align(
+                                      //   alignment: Alignment.topLeft,
+                                      //   child: Text("COULDN'T FIND YOUR SIZE?"),
+                                      // ),
+                                      // const SizedBox(
+                                      //   height: 2,
+                                      // ),
+                                      Container(
+                                        color: Colors.grey,
+                                        height: 1,
+                                      ),
+                                      TextField(
+                                          controller: sizeController,
+                                          decoration: InputDecoration(
+                                            hintText:
+                                                "Write your size here in US or EUR",
+                                            border: InputBorder.none,
+                                            contentPadding: EdgeInsets.only(
+                                                left: Get.width * .05),
+                                          )),
+                                    ],
                                   ),
-                                  // hSizedBox10,
-                                  // const Align(
-                                  //   alignment: Alignment.topLeft,
-                                  //   child: Text("COULDN'T FIND YOUR SIZE?"),
-                                  // ),
-                                  // const SizedBox(
-                                  //   height: 2,
-                                  // ),
-                                  Container(
-                                    color: Colors.grey,
-                                    height: 1,
-                                  ),
-                                  TextField(
-                                      controller: sizeController,
-                                      decoration: InputDecoration(
-                                        hintText:
-                                            "Write your size here in US or EUR",
-                                        border: InputBorder.none,
-                                        contentPadding: EdgeInsets.only(
-                                            left: Get.width * .05),
-                                      )),
-                                  hSizedBox10,
-                                ],
-                              ),
-                            ),
-                          )
+                                ),
+                              )
+                            : const SizedBox.shrink()
                         : const SizedBox.shrink(),
+                    hSizedBox24,
                   ],
                 ),
               ),
@@ -630,6 +650,7 @@ class _ProductDetailState extends State<ProductDetail> {
   bool detailsFetch = false;
   String? rating = "2.0", comment;
   String? selectedSize;
+  int? sizeIndex;
 
   Future<bool> getProductDetails(String productId) async {
     try {
@@ -655,6 +676,12 @@ class _ProductDetailState extends State<ProductDetail> {
         return false;
       } else {
         debugPrint("product name is : ${productDetailsModel.name}");
+        if (productDetailsModel.attributes != null) {
+          sizeIndex = productDetailsModel.attributes!
+              .indexWhere((list) => list.name == "Size");
+          debugPrint("size : $sizeIndex");
+        }
+
         setState(() {
           detailsFetch = true;
         });

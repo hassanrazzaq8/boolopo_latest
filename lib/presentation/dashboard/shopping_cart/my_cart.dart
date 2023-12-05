@@ -67,7 +67,7 @@ class _CartState extends State<Cart> {
                         margin:
                             EdgeInsets.symmetric(vertical: Get.height * .02),
                         decoration: BoxDecoration(
-                            color: Colors.grey[100],
+                            color: Colors.white,
                             borderRadius: BorderRadius.circular(10)),
                         padding: EdgeInsets.all(Get.height * .01),
                         child: IntrinsicHeight(
@@ -131,45 +131,49 @@ class _CartState extends State<Cart> {
                                               fontSize: Get.height * .025,
                                             ),
                                           ),
-                                          IconButton(
-                                            onPressed: () {
-                                              setState(
-                                                () {
-                                                  test[index]["product_qty"] ==
-                                                          1
-                                                      ? null
-                                                      : test[index][
-                                                                  "product_qty"] >=
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              InkWell(
+                                                onTap: () {
+                                                  setState(
+                                                    () {
+                                                      test[index]["product_qty"] ==
                                                               1
-                                                          ? test[index]
-                                                              ["product_qty"]--
-                                                          : null;
+                                                          ? null
+                                                          : test[index][
+                                                                      "product_qty"] >=
+                                                                  1
+                                                              ? test[index]
+                                                                  ["product_qty"]--
+                                                              : null;
+                                                    },
+                                                  );
                                                 },
-                                              );
-                                            },
-                                            icon: Icon(
-                                              Icons.remove_circle,
-                                              size: Get.height * .05,
-                                            ),
-                                          ),
-                                          Text(
-                                            test[index]["product_qty"]
-                                                .toString(),
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: Get.height * .025,
-                                            ),
-                                          ),
-                                          IconButton(
-                                            onPressed: () {
-                                              setState(() {
-                                                test[index]["product_qty"]++;
-                                              });
-                                            },
-                                            icon: Icon(
-                                              Icons.add_circle,
-                                              size: Get.height * .05,
-                                            ),
+                                                child: Icon(
+                                                  Icons.remove_circle,
+                                                  size: Get.height * .04,
+                                                ),
+                                              ),
+                                              Text(
+                                                " ${test[index]["product_qty"]} ",
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: Get.height * .025,
+                                                ),
+                                              ),
+                                              InkWell(
+                                                onTap: () {
+                                                  setState(() {
+                                                    test[index]["product_qty"]++;
+                                                  });
+                                                },
+                                                child: Icon(
+                                                  Icons.add_circle,
+                                                  size: Get.height * .04,
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                           const SizedBox(
                                             width: 5.0,

@@ -82,10 +82,11 @@ class _SearchScreenState extends State<SearchScreen> {
                             ),
                             itemCount: _con.searchedProducts.length,
                             gridDelegate:
-                                const SliverGridDelegateWithFixedCrossAxisCount(
+                                 SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 2,
                               childAspectRatio:
-                                  100 / 160, // getHeight() * .0013,
+                              // 100 / 140,
+                                  Get.height * .001,
                               // mainAxisExtent: getHeight()*.24,
                               //     getWidth() / (getHeight() / 1.80),
                               // mainAxisExtent: getHeight() * .235,

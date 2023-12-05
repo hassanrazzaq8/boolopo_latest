@@ -467,7 +467,7 @@ class _HomePageState extends State<HomePage> {
                 ),
                 Obx(
                   () => SizedBox(
-                    height: Get.height * .65,
+                    height: Get.height * .644,
                     width: Get.width * .80,
                     child: _bottomBarController.productsFetch.value == true
                         ? _bottomBarController.products.isNotEmpty

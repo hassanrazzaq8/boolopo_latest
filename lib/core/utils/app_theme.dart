@@ -4,6 +4,7 @@ import '../app_export.dart';
 
 class AppTheme {
   static ThemeData themeData = ThemeData(
+    useMaterial3: false,
     fontFamily: 'Popins',
     primaryColor: Colors.black,
     canvasColor: AppColors.secondaryColor,

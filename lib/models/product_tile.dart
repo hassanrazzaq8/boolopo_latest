@@ -108,28 +108,19 @@ class _ProductTileState extends State<ProductTile> {
               ),
               hSizedBox10,
               Text(
-                " \$ ${widget.price}",
+                widget.name,
+                maxLines: 1,
+                style: GoogleFonts.oswald(),
+              ),
+              Text(
+                "  \$${widget.price}",
                 style: GoogleFonts.poppins(
                   fontWeight: FontWeight.bold,
                   color: themeColor,
-                  fontSize: Get.textScaleFactor*14,
+                  fontSize: 17,
                   fontStyle: FontStyle.italic,
-                  decoration: TextDecoration.underline,
                 ),
               ),
-              hSizedBox6,
-              Text(
-                widget.name,
-                 style: GoogleFonts.poppins(
-                fontWeight: FontWeight.w600,
-                color: Colors.black,
-                fontSize: Get.textScaleFactor*10,
-              ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-
-              ),
-
             ],
           ),
         ),

@@ -77,88 +77,99 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                             15,
                           ),
                         ),
-                        child: GridTile(
-                          footer: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                item["title"],
-                                maxLines: 1,
-                                style: GoogleFonts.oswald(),
-                              ),
-                              Text(
-                                "   \$${item["price"]}",
-                                style: GoogleFonts.poppins(
-                                  fontWeight: FontWeight.bold,
-                                  color: themeColor,
-                                  fontSize: 17,
-                                  fontStyle: FontStyle.italic,
-                                ),
-                              ),
-                            ],
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 5),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Colors.grey,
+                            ),
+                            borderRadius: BorderRadius.circular(
+                              15,
+                            ),
                           ),
-                          child: Stack(
-                            children: [
-                              Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(
-                                    15,
-                                  ),
-                                  color: Colors.white,
+                          child: GridTile(
+                            footer: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  " ${item["title"]}",
+                                  maxLines: 1,
+                                  style: GoogleFonts.oswald(),
                                 ),
-                                height: double.infinity,
-                                width: 145,
-                              ),
-                              Align(
-                                child: InkWell(
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => ProductDetail(
-                                          id: item["id"],
+                                Text(
+                                  "   \$${item["price"]}",
+                                  style: GoogleFonts.poppins(
+                                    fontWeight: FontWeight.bold,
+                                    color: themeColor,
+                                    fontSize: 17,
+                                    fontStyle: FontStyle.italic,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            child: Stack(
+                              children: [
+                                Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(
+                                      15,
+                                    ),
+                                    color: Colors.white,
+                                  ),
+                                  height: double.infinity,
+                                  width: 145,
+                                ),
+                                Align(
+                                  child: InkWell(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => ProductDetail(
+                                            id: item["id"],
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    child: Image.network(
+                                      item["image"],
+                                      height: 100,
+                                      width: 140,
+                                    ),
+                                  ),
+                                ),
+                                // Align(
+                                //   alignment: const Alignment(0, .67),
+                                //   child:
+                                // ),
+                                Align(
+                                  alignment: Alignment.topRight,
+                                  child: IconButton(
+                                    onPressed: () {
+                                      provider.removeFromfavorite(item["title"]);
+                                    },
+                                    icon: Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(
+                                          15,
+                                        ),
+                                        border: Border.all(
+                                          width: 2,
+                                          color: Colors.grey,
                                         ),
                                       ),
-                                    );
-                                  },
-                                  child: Image.network(
-                                    item["image"],
-                                    height: 100,
-                                    width: 140,
-                                  ),
-                                ),
-                              ),
-                              // Align(
-                              //   alignment: const Alignment(0, .67),
-                              //   child:
-                              // ),
-                              Align(
-                                alignment: Alignment.topRight,
-                                child: IconButton(
-                                  onPressed: () {
-                                    provider.removeFromfavorite(item["title"]);
-                                  },
-                                  icon: Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(
-                                        15,
-                                      ),
-                                      border: Border.all(
-                                        width: 2,
-                                        color: Colors.grey,
-                                      ),
-                                    ),
-                                    child: const Align(
-                                      child: Icon(
-                                        Icons.favorite,
-                                        color: Colors.grey,
-                                        size: 20,
+                                      child: const Align(
+                                        child: Icon(
+                                          Icons.favorite,
+                                          color: Colors.grey,
+                                          size: 20,
+                                        ),
                                       ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                       );
