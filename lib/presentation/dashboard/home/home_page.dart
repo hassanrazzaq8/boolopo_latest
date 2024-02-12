@@ -353,75 +353,433 @@ class _HomePageState extends State<HomePage> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              width: Get.width * .17,
-              padding: EdgeInsets.only(top: Get.height * .1),
-              child: ScrollConfiguration(
-                behavior: const ScrollBehavior().copyWith(overscroll: false),
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: leftSideItems.length,
-                  itemBuilder: (context, index) {
-                    return GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          _bottomBarController.selectedTopItem.value = -1;
-                          _bottomBarController.selectedLeftitem.value = index;
-                          _bottomBarController.categoryId.value = index == 0
-                              ? "200"
-                              : index == 1
-                                  ? "204"
-                                  : index == 2
-                                      ? "203"
-                                      : "3029";
-                        });
-
-                        _bottomBarController.getProducts(
-                          context,
-                          selectedOption: GetProductsBy.leftItems,
-                          categoryId: index == 0
-                              ? "200"
-                              : index == 1
-                                  ? "204"
-                                  : index == 2
-                                      ? "203"
-                                      : "3029",
-                        );
-                      },
-                      child: Obx(
-                        () => RotatedBox(
-                          quarterTurns: 1,
-                          child: Container(
-                            padding: const EdgeInsets.all(10),
-                            margin: const EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                              color:
-                                  _bottomBarController.selectedLeftitem.value ==
-                                          index
-                                      ? themeColor
-                                      : Colors.white,
-                              borderRadius: BorderRadius.circular(15),
+            // Container(
+            //   width: Get.width * .17,
+            //   padding: EdgeInsets.only(top: Get.height * .1),
+            //   child: ScrollConfiguration(
+            //     behavior: const ScrollBehavior().copyWith(overscroll: false),
+            //     child: ListView.builder(
+            //       shrinkWrap: true,
+            //       itemCount: leftSideItems.length,
+            //       itemBuilder: (context, index) {
+            //         return GestureDetector(
+            //           onTap: () {
+            //             setState(() {
+            //               _bottomBarController.selectedTopItem.value = -1;
+            //               _bottomBarController.selectedLeftitem.value = index;
+            //               _bottomBarController.categoryId.value = index == 0
+            //                   ? "200"
+            //                   : index == 1
+            //                       ? "204"
+            //                       : index == 2
+            //                           ? "203"
+            //                           : "3029";
+            //             });
+            //
+            //             _bottomBarController.getProducts(
+            //               context,
+            //               selectedOption: GetProductsBy.leftItems,
+            //               categoryId: index == 0
+            //                   ? "200"
+            //                   : index == 1
+            //                       ? "204"
+            //                       : index == 2
+            //                           ? "203"
+            //                           : "3029",
+            //             );
+            //           },
+            //           child: Obx(
+            //             () => RotatedBox(
+            //               quarterTurns: 1,
+            //               child: Container(
+            //                 padding: const EdgeInsets.all(10),
+            //                 margin: const EdgeInsets.all(10),
+            //                 decoration: BoxDecoration(
+            //                   color:
+            //                       _bottomBarController.selectedLeftitem.value ==
+            //                               index
+            //                           ? themeColor
+            //                           : Colors.white,
+            //                   borderRadius: BorderRadius.circular(15),
+            //                 ),
+            //                 child: Text(
+            //                   leftSideItems[index],
+            //                   style: TextStyle(
+            //                     fontSize: 14,
+            //                     color: _bottomBarController
+            //                                 .selectedLeftitem.value ==
+            //                             index
+            //                         ? Colors.white
+            //                         : Colors.black,
+            //                     fontWeight: FontWeight.w400,
+            //                   ),
+            //                 ),
+            //               ),
+            //             ),
+            //           ),
+            //         );
+            //       },
+            //     ),
+            //   ),
+            // ),
+            Obx (()=>  Container(
+                // height: Get.height * .8,
+                width: Get.width * .15,
+                padding: EdgeInsets.only(top: Get.height * .07),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      flex: 1,
+                      child: Stack(
+                        children: [
+                          Positioned.fill(
+                            child: Container(
+                              color:_bottomBarController.selectedLeftitem.value ==
+                                  0? themeColor :Colors.white,
                             ),
-                            child: Text(
-                              leftSideItems[index],
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: _bottomBarController
-                                            .selectedLeftitem.value ==
-                                        index
-                                    ? Colors.white
-                                    : Colors.black,
-                                fontWeight: FontWeight.w400,
+                          ),
+                          RotatedBox(
+                            quarterTurns: 1,
+                            child: Container(
+                              // width: 120,
+                              height: 60,
+                              decoration: const BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.only(
+                                  bottomRight: Radius.circular(20),
+                                  // bottomLeft: Radius.circular(20),
+                                ),
                               ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () {
+                          setState(() {
+                            _bottomBarController.selectedTopItem.value = -1;
+                            _bottomBarController.selectedLeftitem.value = 0;
+                            _bottomBarController.categoryId.value =  "200";
+                          });
+                          _bottomBarController.getProducts(
+                            context,
+                            selectedOption: GetProductsBy.leftItems,
+                            categoryId: "200"
+                          );
+                      },
+                      child: RotatedBox(
+                        quarterTurns: 1,
+                        child: Container(
+                          height: 50,
+                          // width: 100,
+                          padding: EdgeInsets.symmetric(horizontal: Get.height*.01),
+                          decoration:  BoxDecoration(
+                            color:_bottomBarController.selectedLeftitem.value ==
+                                0? themeColor:Colors.white,
+                            borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(20),
+                              topRight: Radius.circular(20),
+                            ),
+                          ),
+                          alignment: Alignment.center,
+                          child: Text(
+                            leftSideItems[0],
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: _bottomBarController
+                                  .selectedLeftitem.value ==
+                                  0
+                                  ? Colors.white
+                                  : Colors.black,
+                              fontWeight: FontWeight.w400,
                             ),
                           ),
                         ),
                       ),
-                    );
-                  },
+                    ),
+                    Expanded(
+                      flex: 3,
+                      child: Stack(
+                        children: [
+                          Positioned.fill(
+                            child: Container(
+                              color:_bottomBarController.selectedLeftitem.value ==
+                                  1? themeColor:Colors.white,
+                            ),
+                          ),
+                          RotatedBox(
+                            quarterTurns: 1,
+                            child: Container(
+                              // width: 120,
+                              height: 60,
+                              decoration:  BoxDecoration(
+                                color:_bottomBarController.selectedLeftitem.value ==
+                                    0? themeColor:Colors.white,
+                                borderRadius: const BorderRadius.only(
+                                  bottomRight: Radius.circular(20),
+                                  // bottomLeft: Radius.circular(20),
+                                ),
+                              ),
+                            ),
+                          ),
+                          RotatedBox(
+                            quarterTurns: 1,
+                            child: Container(
+                              // width: 120,
+                              height: 60,
+                              decoration: const BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.only(
+                                  bottomRight: Radius.circular(20),
+                                  bottomLeft: Radius.circular(20),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        setState(() {
+                          _bottomBarController.selectedTopItem.value = -1;
+                          _bottomBarController.selectedLeftitem.value = 1;
+                          _bottomBarController.categoryId.value =  "204";
+                        });
+                        _bottomBarController.getProducts(
+                            context,
+                            selectedOption: GetProductsBy.leftItems,
+                            categoryId: "204"
+                        );
+                      },
+                      child: RotatedBox(
+                        quarterTurns: 1,
+                        child: Container(
+                          height: 50,
+                          padding: EdgeInsets.symmetric(horizontal: Get.height*.01),
+                          decoration:  BoxDecoration(
+                            color:_bottomBarController.selectedLeftitem.value ==
+                                1? themeColor:Colors.white,
+                            borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(20),
+                              topRight: Radius.circular(20),
+                            ),
+                          ),
+                          alignment: Alignment.center,
+                          child: Text(
+                            leftSideItems[1],
+                            style: TextStyle(
+                              fontSize: 14,
+                              color:
+                                  _bottomBarController.selectedLeftitem.value == 1
+                                      ? Colors.white
+                                      : Colors.black,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 3,
+                      child: Stack(
+                        children: [
+                          Positioned.fill(
+                            child: Container(
+                              color: _bottomBarController.selectedLeftitem.value ==
+                                  2? themeColor:Colors.white,
+                            ),
+                          ),
+                          RotatedBox(
+                            quarterTurns: 1,
+                            child: Container(
+                              // width: 120,
+                              height: 60,
+                              decoration:  BoxDecoration(
+                                color:_bottomBarController.selectedLeftitem.value ==
+                                    1? themeColor:Colors.white,
+                                borderRadius: const BorderRadius.only(
+                                  bottomRight: Radius.circular(20),
+                                  // bottomLeft: Radius.circular(20),
+                                ),
+                              ),
+                            ),
+                          ),
+                          RotatedBox(
+                            quarterTurns: 1,
+                            child: Container(
+                              // width: 120,
+                              height: 60,
+                              decoration: const BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.only(
+                                  bottomRight: Radius.circular(20),
+                                  bottomLeft: Radius.circular(20),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        setState(() {
+                          _bottomBarController.selectedTopItem.value = -1;
+                          _bottomBarController.selectedLeftitem.value = 2;
+                          _bottomBarController.categoryId.value =  "203";
+                        });
+                        _bottomBarController.getProducts(
+                            context,
+                            selectedOption: GetProductsBy.leftItems,
+                            categoryId: "203"
+                        );
+                      },
+                      child: RotatedBox(
+                        quarterTurns: 1,
+                        child: Container(
+                          height: 50,
+                          padding: EdgeInsets.symmetric(horizontal: Get.height*.01),
+                          decoration:  BoxDecoration(
+                            color:_bottomBarController.selectedLeftitem.value ==
+                                2?themeColor:Colors.white,
+                            borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(20),
+                              topRight: Radius.circular(20),
+                            ),
+                          ),
+                          alignment: Alignment.center,
+                          child: Text(
+                            leftSideItems[2],
+                            style: TextStyle(
+                              fontSize: 14,
+                              color:
+                                  _bottomBarController.selectedLeftitem.value == 2
+                                      ? Colors.white
+                                      : Colors.black,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 3,
+                      child: Stack(
+                        children: [
+                          Positioned.fill(
+                            child: Container(
+                              color: _bottomBarController.selectedLeftitem.value ==
+                                  3? themeColor:Colors.white,
+                            ),
+                          ),
+                          RotatedBox(
+                            quarterTurns: 1,
+                            child: Container(
+                              // width: 120,
+                              height: 60,
+                              decoration:  BoxDecoration(
+                                color:_bottomBarController.selectedLeftitem.value ==
+                                    2? themeColor:Colors.white,
+                                borderRadius: const BorderRadius.only(
+                                  bottomRight: Radius.circular(20),
+                                  // bottomLeft: Radius.circular(20),
+                                ),
+                              ),
+                            ),
+                          ),
+                          RotatedBox(
+                            quarterTurns: 1,
+                            child: Container(
+                              // width: 120,
+                              height: 60,
+                              decoration: const BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.only(
+                                  bottomRight: Radius.circular(20),
+                                  bottomLeft: Radius.circular(20),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        setState(() {
+                          _bottomBarController.selectedTopItem.value = -1;
+                          _bottomBarController.selectedLeftitem.value = 3;
+                          _bottomBarController.categoryId.value =  "3029";
+                        });
+                        _bottomBarController.getProducts(
+                            context,
+                            selectedOption: GetProductsBy.leftItems,
+                            categoryId: "3029"
+                        );
+                      },
+                      child: RotatedBox(
+                        quarterTurns: 1,
+                        child: Container(
+                          height: 50,
+                          padding: EdgeInsets.symmetric(horizontal: Get.height*.01),
+                          decoration:  BoxDecoration(
+                            color:_bottomBarController.selectedLeftitem.value ==
+                                3? themeColor:Colors.white,
+                            borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(20),
+                              topRight: Radius.circular(20),
+                            ),
+                          ),
+                          alignment: Alignment.center,
+                          child: Text(
+                            leftSideItems[3],
+                            style: TextStyle(
+                              fontSize: 14,
+                              color:
+                                  _bottomBarController.selectedLeftitem.value == 3
+                                      ? Colors.white
+                                      : Colors.black,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 1,
+                      child: Stack(
+                        children: [
+                          Positioned.fill(
+                            child: Container(
+                              color: _bottomBarController.selectedLeftitem.value ==
+                                  3? themeColor:Colors.white,
+                            ),
+                          ),
+                          RotatedBox(
+                            quarterTurns: 1,
+                            child: Container(
+                              // width: 120,
+                              height: 60,
+                              decoration: const BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.only(
+                                  bottomLeft: Radius.circular(20),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
+            const Spacer(),
             Column(
               children: [
                 SizedBox(
