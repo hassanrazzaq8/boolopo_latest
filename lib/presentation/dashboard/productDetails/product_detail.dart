@@ -41,6 +41,7 @@ class _ProductDetailState extends State<ProductDetail> {
   final int count = 1;
   String? review;
   int currentIndex = 0;
+  int variationId = 0;
 
   @override
   void initState() {
@@ -145,7 +146,8 @@ class _ProductDetailState extends State<ProductDetail> {
                               productDetailsModel.price ?? "",
                               count,
                               productDetailsModel.images?.first.src ?? "",
-                              selectedSize ?? "",
+                              selectedSize??''
+,                              variationId ?? 0,
                             );
                             showSnackBar("Product added to your cart", context);
                             Navigator.pop(context);
@@ -162,6 +164,7 @@ class _ProductDetailState extends State<ProductDetail> {
                             count,
                             productDetailsModel.images?.first.src ?? "",
                             selectedSize ?? "",
+                            variationId
                           );
                           showSnackBar("Product added to your cart", context);
                           Get.back();
@@ -315,7 +318,9 @@ class _ProductDetailState extends State<ProductDetail> {
                           ),
                           const SizedBox(height: 10),
                           Text(
-                            "  ${productDetailsModel.attributes?.last.options?.first??"nil"}",
+                            productDetailsModel.attributes?.isNotEmpty ?? false
+                                ? "  ${productDetailsModel.attributes?.last.options?.first ?? "nil"}"
+                                : "nil",
                             style: GoogleFonts.poppins(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
@@ -323,6 +328,7 @@ class _ProductDetailState extends State<ProductDetail> {
                               fontStyle: FontStyle.italic,
                             ),
                           ),
+
                           Text(
                             "  \$ ${productDetailsModel.price ?? ""}",
                             style: GoogleFonts.poppins(
@@ -593,6 +599,12 @@ class _ProductDetailState extends State<ProductDetail> {
                                               setState(() {
                                                 selectedSize = newValue;
                                               });
+                                           final index=   productDetailsModel
+                                                  .attributes![sizeIndex ?? 0]
+                                                  .options!.indexOf(selectedSize!);
+                                           variationId = productDetailsModel.variations?[index]??0;
+                                           debugPrint('variation id is  : $variationId');
+
                                             },
                                             items: productDetailsModel
                                                 .attributes![sizeIndex ?? 0]
@@ -610,14 +622,6 @@ class _ProductDetailState extends State<ProductDetail> {
                                           ),
                                         ),
                                       ),
-                                      // hSizedBox10,
-                                      // const Align(
-                                      //   alignment: Alignment.topLeft,
-                                      //   child: Text("COULDN'T FIND YOUR SIZE?"),
-                                      // ),
-                                      // const SizedBox(
-                                      //   height: 2,
-                                      // ),
                                       Container(
                                         color: Colors.grey,
                                         height: 1,
@@ -739,221 +743,4 @@ class _ProductDetailState extends State<ProductDetail> {
   }
 }
 
-// import 'package:flutter/material.dart';
-// import 'package:get/get.dart';
-// import 'package:google_fonts/google_fonts.dart';
-// import 'package:watch_app/core/utils/image_constant.dart';
-//
-// import '../../../utills/color.dart';
-// import '../../bottomBar/bottombar_screen.dart';
-// import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-//
-// class ProductDetail extends StatefulWidget {
-//   const ProductDetail({
-//     Key? key, required this.id,
-//
-//   }) : super(key: key);
-//   final String id;
-//
-//   @override
-//   State<ProductDetail> createState() => _ProductDetailState();
-// }
-//
-// class _ProductDetailState extends State<ProductDetail> {
-//
-//   int size = 0;
-//   bool isRated = false;
-//   String review="";
-//
-//   TextEditingController sizeController = TextEditingController();
-//
-//   @override
-//   void dispose() {
-//     super.dispose();
-//     sizeController.dispose();
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     Widget rate(bool state) {
-//       return InkWell(
-//         onTap: () {
-//           state != state;
-//           setState(() {});
-//         },
-//         child: state
-//             ? const Icon(
-//           Icons.star,
-//           color: Colors.red,
-//         )
-//             : const Icon(
-//           Icons.star_border,
-//           color: Colors.black,
-//         ),
-//       );
-//     }
-//
-//     return MaterialApp(
-//       theme: ThemeData(
-//         scaffoldBackgroundColor: Colors.white,
-//       ),
-//       home: Scaffold(
-//         appBar: AppBar(
-//           // backgroundColor: Colors.blue,
-//           backgroundColor: Colors.white,
-//           elevation: 0.0,
-//           leading: IconButton(
-//             icon: const Icon(
-//               Icons.arrow_back_ios_new,
-//               color: Colors.black,
-//               size: 20,
-//             ),
-//             onPressed: () {
-//               Navigator.of(context).pop();
-//             },
-//           ),
-//           title: Text(
-//             "BOO--LOPO",
-//             style: GoogleFonts.oswald(
-//               color: Colors.black,
-//             ),
-//           ),
-//           centerTitle: true,
-//           actions: [
-//             IconButton(
-//               onPressed: () {
-//               },
-//               icon: Image.asset(ImageConstant.menu),
-//               iconSize: 20,
-//             ),
-//           ],
-//         ),
-//         drawer: BottomBarScreenState().drawerOpen(),
-//         bottomNavigationBar: Padding(
-//           padding: const EdgeInsets.only(bottom: 18.0),
-//           child: Row(
-//             mainAxisAlignment: MainAxisAlignment.spaceAround,
-//             children: [
-//               IconButton(
-//                 onPressed: () {},
-//                 icon: Icon(
-//                   Icons.favorite,
-//                   color: Colors.grey.shade800,
-//                 ),
-//               ),
-//               ElevatedButton(
-//                 style: ElevatedButton.styleFrom(
-//                     primary: Colors.black,
-//                     shape: RoundedRectangleBorder(
-//                       borderRadius: BorderRadius.circular(
-//                         17,
-//                       ),
-//                     ),
-//                     minimumSize: const Size(150, 45)),
-//                 onPressed: () {
-//                   setState(() {});
-//                 },
-//                 child: Text(
-//                   "Add To Cart",
-//                   style: GoogleFonts.oswald(
-//                     fontWeight: FontWeight.w600,
-//                     fontSize: 18,
-//                   ),
-//                 ),
-//               ),
-//               IconButton(
-//                 onPressed: () {},
-//                 icon: const Icon(
-//                   Icons.shopping_cart,
-//                   color: Colors.grey,
-//                 ),
-//               ),
-//             ],
-//           ),
-//         ),
-//         body: SingleChildScrollView(
-//           child: Column(
-//             children: [
-//               Padding(
-//                 padding: const EdgeInsets.symmetric(horizontal: 18.0),
-//                 child: Align(
-//                   alignment: Alignment.topCenter,
-//                   child: Text(
-//                    " widget.name",
-//                     style: GoogleFonts.oswald(
-//                       fontWeight: FontWeight.bold,
-//                       fontSize: 20,
-//                     ),
-//                   ),
-//                 ),
-//               ),
-//               Padding(
-//                 padding: const EdgeInsets.only(left: 18.0),
-//                 child: Container(
-//                   decoration: const BoxDecoration(
-//                     color: Colors.white,
-//                     // color: const Color.fromARGB(248, 9, 34, 90).withOpacity(.40),
-//                   ),
-//                   child: Column(
-//                     children: [
-//                       SizedBox(
-//                         height: MediaQuery.of(context).size.height * .40,
-//                         width: double.infinity,
-//                         child: Align(
-//                           child: Image.network("")
-//                         ),
-//                       ),
-//                       Column(
-//                         children: [
-//                           Row(
-//                             children: [
-//                               Text(
-//                                 " \$ {widget.price}",
-//                                 style: GoogleFonts.poppins(
-//                                   fontSize: 25,
-//                                   fontWeight: FontWeight.bold,
-//                                   color: themeColor,
-//                                   fontStyle: FontStyle.italic,
-//                                 ),
-//                               ),
-//                               const Text("  Free Shipping!",
-//                                   style:
-//                                   TextStyle(fontWeight: FontWeight.bold)),
-//                             ],
-//                           ),
-//
-//                         ],
-//                       ),
-//                     ],
-//                   ),
-//                 ),
-//               ),
-//               const SizedBox(
-//                 height: 5,
-//               ),
-//               const Padding(
-//                 padding: EdgeInsets.symmetric(horizontal: 18.0),
-//                 child: Align(
-//                   alignment: Alignment.topLeft,
-//                   child: Text("COULDN'T FIND YOUR SIZE?"),
-//                 ),
-//               ),
-//               const SizedBox(
-//                 height: 2,
-//               ),
-//               Padding(
-//                 padding: const EdgeInsets.symmetric(horizontal: 18.0),
-//                 child: TextField(
-//                     controller: sizeController,
-//                     decoration: const InputDecoration(
-//                       hintText: "Write your size here in US or EUR",
-//                       border: OutlineInputBorder(),
-//                     )),
-//               ),
-//             ],
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-// }
+

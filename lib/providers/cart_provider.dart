@@ -7,7 +7,7 @@ class ProviderCart extends ChangeNotifier {
   List get cart => _cart;
 
   void addToCart(
-      String id, String title, String price, int quantity, String image,String size) {
+      String id, String title, String price, int quantity, String image,String size, int variationId) {
     if (GetStorage().read("myCart") != null) {
       _cart = GetStorage().read("myCart");
     }
@@ -20,7 +20,8 @@ class ProviderCart extends ChangeNotifier {
           "product_price": price,
           "product_qty": quantity,
           "image": image,
-          "size":size,
+          "size":variationId,
+          "productSize":size,
         },
       );
       GetStorage().write("myCart", _cart);

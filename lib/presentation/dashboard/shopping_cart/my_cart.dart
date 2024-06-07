@@ -107,7 +107,7 @@ class _CartState extends State<Cart> {
                                                   ),
                                                 ),
                                                 TextSpan(
-                                                  text: test[index]["size"],
+                                                  text: test[index]["productSize"],
                                                 ),
                                               ],
                                             ),

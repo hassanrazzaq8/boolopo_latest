@@ -33,6 +33,15 @@ class OrderSummaryController extends GetxController {
         "shiping_state": shipperDetails["state"],
         "shiping_post_code": shipperDetails["postcode"],
         "items_list": cart,
+        // "items_list": [
+        //   {
+        //     'product_id': 104609,
+        //     'product_name': "JORDAN 4 RETRO 'MILITARY BLUE' 2024",
+        //     'product_price': 189,
+        //     'product_qty': 1,
+        //     'size': 104611,
+        //   },
+        // ],
       };
       jsonEncode(body);
       debugPrint("body is : $body");
@@ -42,16 +51,22 @@ class OrderSummaryController extends GetxController {
         isPlaceOrder: true,
       );
       Loader.hideLoader(context);
+      debugPrint("data response if I am in luck : $data");
       if (data != null) {
         GetStorage().remove("myCart");
         data["payment_link"] != null
             ? paymentMethodDialogue(data["payment_link"])
             : customDialogue(message: AppString.badHappenedError);
+        return true;
       }
-      debugPrint("data response if I am in luck : $data");
+      else{
+        Loader.hideLoader(context);
 
-      return true;
+        return false;
+    }
+
     } catch (err) {
+      Loader.hideLoader(context);
       return false;
     }
   }
@@ -82,13 +97,14 @@ class OrderSummaryController extends GetxController {
                 onPressed: () {
                   Get.back();
                   Get.to(
-                    () => AppWebView(
-                      url: url,
-                      title: "Payment",
-                      onBackTap: () {
-                        Get.offAllNamed(AppRoutes.myOrdersScreen);
-                      },
-                    ),
+                        () =>
+                        AppWebView(
+                          url: url,
+                          title: "Payment",
+                          onBackTap: () {
+                            Get.offAllNamed(AppRoutes.myOrdersScreen);
+                          },
+                        ),
                   );
                 },
                 width: Get.width / 2,
